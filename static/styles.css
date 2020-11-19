@@ -1,0 +1,78 @@
+
+
+.fest{
+	display:inline-block;
+	color:red;
+}
+
+body{
+	background-color:#eeeeee;
+}
+
+form{
+    width:100%;
+    padding:0;
+    margin:0;
+    display:inline;
+}
+
+.input-group{
+    width:100%;
+
+}
+
+.clear-fix{
+	clear:both;
+}
+
+.list-group-item p{
+	margin:0px;
+}
+
+.material-icons{
+	border-radius:100%;
+	background-color:#dddddd;
+	padding:4px;
+	color:black;
+	}
+
+
+.links-seite{
+	display:flex;
+	justify-content:left;
+	align-items:center;
+	margin:0px;
+}
+
+.aufgabe-title{
+	font-size:15px;
+}
+
+.aufgabe-erstellt{
+	font-size:12px;
+}
+
+.aufgabe-links{
+	margin:0px;
+	margin-right:15px;
+}
+
+.aufgabe-mitte{
+	margin:0px;
+}
+
+.aufgabe-rechts{
+	margin:0px;
+	margin-left:auto;
+}
+
+h2.list-title{
+	text-align:center;
+}
+
+@media only screen and (min-width:760px){
+	.container{
+		width:760px;
+	}
+
+}

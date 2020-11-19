@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <h2 class="list-title">Liste: Psychologie im Deutschland</h2>
+    <br>
+	<div class="form-group">
+
+		<form action="." method="POST">
+
+			<input name="contents" id="eingabe" type="text" class="form-control" placeholder="Neue Aufgabe...">
+
+		</form>
+
+	</div>
+
+	<br>
+
+  <ul class="list-group">
+
+	{% for comment in comments %}
+    <li class="list-group-item">
+	<div class="links-seite">
+	<div class="aufgabe-links"><a href="{{ url_for('fertig', n=comment.id) }}"><span class="material-icons">{{ 'check' if comment.fertig else 'radio_button_unchecked' }}</span></a></div>
+	<div class="aufgabe-mitte"><p><span class="aufgabe-title">{{ comment.content }}</span></p><p><span class="aufgabe-erstellt">Von: 16.11.2020 / Bis:25.12.2020</span></p></div>
+	<div class="aufgabe-rechts">
+	<a href="{{ url_for('wichtig', n=comment.id) }}"> <span class="material-icons">{{ 'star' if comment.wichtig else 'star_border' }}</span></a>
+	<a href="#"> <span class="material-icons">edit</span></a>
+	<a href="{{ url_for('loschen', n=comment.id) }}"> <span class="material-icons">delete</span></a></div>
+	</div>
+	</li>
+	{% endfor %}
+	<br>
+	<p>0 Aufgaben Abgeschlossen</p>
+
+</ul>
+</div>
+{% endblock %}
