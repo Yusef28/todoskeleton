@@ -23,6 +23,7 @@ from models import User, List, Task
 
 @app.route("/")
 def index():
+	'''
 	print("Home")
 	print("Welcome to the DuMi app")
 	print("Enter 1 for Registration")
@@ -32,18 +33,19 @@ def index():
 	print("")
 	answer = input()
 	if answer == "1":
-		return registration()
+		return redirect(url_for('registration'))
 	elif answer == "2":
-		return login()	
-	elif answer == "3":
-		return 
-	return index()
+		return redirect(url_for('login'))
+	'''
 
-@app.route("/registration")
+	return render_template('auth/index.html')
+
+@app.route("/registration", methods=('GET', 'POST'))
 def registration():
 	print("Registration")
 	print("")
 	
+	'''
 	print("Enter a User Name")
 	name = input()
 	print("Enter an email")
@@ -51,17 +53,24 @@ def registration():
 	print("Enter an password")
 	password = input()
 	print("")
+	'''
 	
-	#if the user creation works, go to login
-	result =  user_create(name, email, password)
-	if result:
-		print(result)
-		print("")
-		return login()	
+	if request.method == 'POST':
+		name = request.form['benutzername']
+		password = request.form['kenntwort']
+		email = request.form['email']
+		#if the user creation works, go to login
+		result =  user_create(name, email, password)
 		
-	print('invalid registration')
-	return register()
-
+		if result:
+			print(result)
+			print("")
+			return redirect(url_for('login'))
+		
+	#print('invalid registration')
+	#return registration()
+	return render_template('auth/registration.html')
+	
 #User
 
 #C
@@ -249,43 +258,50 @@ def task_delete(id):
 
 
 #Login 
-@app.route("/login")
+@app.route("/login", methods=('GET', 'POST'))
 def login():
+
+	'''
 	print("Login")
 	print("Geben sie ein Benutzer Name ein...")
 	name = input()
 	print("Geben sie ein Kenntwort ein...")
 	kenntwort = input()
-	error = None
-	if not name:
-		error = 'Benutzername ist notig.'
-		print(error)
+	'''
+	if request.method == 'POST':
+		name = request.form['benutzername']
+		password = request.form['kenntwort']
 		
-	elif not kenntwort:
-		error = 'Kenntwort ist notig.'
-		print(error)
+		error = None
+		if not name:
+			error = 'You need to enter a user name.'
+			print(error)
+			
+		elif not password:
+			error = 'You need to enter a password.'
+			print(error)
+			
+		if error:
+			return login()
+			
+		user = User.query.filter_by(name = name).first()#first weil anderfalls sie krieg ein increment objekt
+		#print(user)
 		
-	if error:
-		return login()
 		
-	user = User.query.filter_by(name = name).first()#first weil anderfalls sie krieg ein increment objekt
-	#print(user)
-	
-	
-	if not user:
-		error = 'Benutzer nicht vorhanden'
-		print(error)
+		if not user:
+			error = 'User not found.'
+			print(error)
+			
+		elif user.password != password:
+			error = 'User name or password False.'
+			print(error)
+			
+		else:
+			#start session?
+			#frag nach all listen und tasks
+			return zeige(user)
 		
-	elif user.password != kenntwort:
-		error = 'Benutzername oder Kenntwort ist falsch'
-		print(error)
-		
-	else:
-		#start session?
-		#frag nach all listen und tasks
-		return zeige(user)
-		
-	return login()
+	return render_template('auth/login.html')
 
 #Diese funktioniert als ein schiene HTML Datei
 @app.route("/zeige")

@@ -28,6 +28,7 @@ print(f"{t.name}{t.email}{t.password}{t.time_created}")
 #ich erstelle ein andere aktuelle task und dann es gibt zwei! 
 #und dann die schleif lauft und wenn es triff die erste aktuelle task es nimmt es
 
+#und hier ohne ein default list es ist ein problem 
 freund_list = List(title="Keanu's Freunden", current=False, parent_user=k.id)
 familie_list = List(title="Keanu's Filme", current=False, parent_user=k.id)
 kleidung_list = List(title="Keanu's Kleidung", current=False, parent_user=k.id)

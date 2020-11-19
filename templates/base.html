@@ -22,14 +22,14 @@
 
 	<ul class="nav navbar-nav">
 	  <li><a href="{{ url_for('index') }}">Alle</a></li>
-	  <li><a href="{{ url_for('aktuelle_seite') }}">Aktuelle</a></li>
-	  <li><a href="{{ url_for('fertig_seite') }}">Abgeschlossen</a></li>
-	  <li><a href="{{ url_for('geloscht_seite') }}">Geloscht</a></li>
+	  <li><a href="#">Aktuelle</a></li>
+	  <li><a href="#">Abgeschlossen</a></li>
+	  <li><a href="#">Geloscht</a></li>
     </ul>
 
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="{{ url_for('registrieren') }}"><span class="glyphicon glyphicon-user"></span> Registrieren</a></li>
-      <li><a href="{{ url_for('einloggen') }}"><span class="glyphicon glyphicon-log-in"></span> Anmelden</a></li>
+      <li><a href="{{ url_for('registration') }}"><span class="glyphicon glyphicon-user"></span> Registrieren</a></li>
+      <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Anmelden</a></li>
     </ul>
   </div>
 </nav>

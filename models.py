@@ -38,12 +38,12 @@ class List(db.Model):
 	__tablename__ = "lists"
 
 	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String(80), unique=True, nullable=False)
+	title = db.Column(db.String(80), nullable=False)
 	parent_user = Column(Integer, ForeignKey('users.id'), nullable=False)
 	tasks = relationship("Task", cascade="all, delete")
 	current = db.Column(Boolean, unique=False, default=False)
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
-	time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
+	#time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class Task(db.Model):
@@ -54,7 +54,7 @@ class Task(db.Model):
 	title = db.Column(db.String(200), nullable=False)
 	parent_list = Column(Integer, ForeignKey('lists.id'), nullable=False)
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
-	time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
+	#time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 	current = db.Column(Boolean, unique=False, default=True)
 	important = db.Column(Boolean, unique=False, default=False)
 	deleted = db.Column(Boolean, unique=False, default=False)
