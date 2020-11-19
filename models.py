@@ -30,7 +30,7 @@ class User(db.Model):
 	email = db.Column(db.String(80), unique=True, nullable=False)
 	password = db.Column(db.String(20), nullable=False)
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
-	time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
+	#time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 	lists = relationship("List", cascade="all, delete")
 
 class List(db.Model):

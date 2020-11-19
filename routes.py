@@ -158,12 +158,20 @@ def liste_aktualizieren(id, neue):
 	return 'Liste title von !'+alt+'! nach *'+list.title+'* Verandert!'
 
 #D 
-@app.route("/liste_loschen")
-def liste_loschen(id):
+@app.route("/list_delete")
+def list_delete(id):
 	list = List.query.get(id)
+	if list.title == "Default":
+		return 'You cannot delete the Default list!'
+		
+	if list.current == True:
+		default = List.query.filter_by(title = "Default").first()
+		list.current = False
+		default.current = True
+		
 	db.session.delete(list)
 	db.session.commit()
-	return 'List *'+list.title+'* geloscht!'
+	return 'List *'+list.title+'* Deleted!'
 
 @app.route("/liste_tasks")
 def liste_tasks(id):
@@ -202,45 +210,45 @@ def change_current_list(old_list):
 #Task
 
 #C
-@app.route("/task_erstellen")
-def task_erstellen(title, id):
-
+@app.route("/task_create")
+def task_create(title, id):
+	
 	list = List.query.get(id)
 	task = Task(title=title, parent_list=id)
 	db.session.add(task)
 	db.session.commit()
 	
-	return 'Task *'+task.title+'* fur List *'+list.title+'* erstellt!'
+	return 'Task *'+task.title+'* for List *'+list.title+'* created!'
 	
 #R 
-@app.route("/task_lesen")
-def task_lesen(id):
-	#list id hier
-	tasks = Task.query.filter_by(parent_list=id)
-	for task in tasks:
-		print(task.title)
-	return 'Tasks gelesen'
+#@app.route("/task_lesen")
+#def task_lesen(id):
+#	#list id hier
+#	tasks = Task.query.filter_by(parent_list=id)
+#	for task in tasks:
+#		print(task.title)
+#	return 'Tasks gelesen'
 
 #U
-@app.route("/task_aktualizieren")
-def task_aktualizieren(id, neue):
+@app.route("/task_update")
+def task_update(id, neue):
 	#task id hier
 	task = db.session.query(Task).get(id)
-	alt = task.title
+	old = task.title
 	task.title = neue
 	db.session.commit()
-	return 'task title von !'+alt+'! nach *'+task.title+'* Verandert!'
+	return 'task title von !'+old+'! nach *'+task.title+'* updated!'
 
 #D 
-@app.route("/task_loschen")
-def task_loschen(id):
+@app.route("/task_delete")
+def task_delete(id):
 	task = Task.query.get(id)
 	db.session.delete(task)
 	db.session.commit()
-	return 'List *'+task.title+'* geloscht!'
+	return 'List *'+task.title+'* deleted!'
 
 
-#Login
+#Login 
 @app.route("/login")
 def login():
 	print("Login")
@@ -289,14 +297,26 @@ def zeige(user):
 	#listen = List.query.filter(parent_user=user.id)
 	listen = List.query.filter_by(parent_user = user.id)
 	
-	current_list = find_current_list(listen)
 	
+	#for current list I have some options
+	#1. make default un-deletable and if you delete current list, default becomes current list
+	#2. if you delete current list, there is no current list and use must select one
+	#3. if you have no lists and add one, it becomes the current list
+	#4. if you have no lists and add one, you still have to select it
+	#5. the app starts with a default list and it is current
+	#6. the app starts with a default list but it is not current, you have to select it
+	#7. you can select "Home" or some other option and then have no lists selected (so it's a state instead of an accident)
+	
+	#The easiest method (fewest lines of code) is just make default un deletable and 
+	#if you delete the current list then default becomes current list(again). Catch the ball as it falls.
+	
+	current_list = find_current_list(listen)
 	print(f"current list is {current_list.title}")
 	
-	#list von listen
+	#list of lists
 	listen_text = []
 	for l in listen:
-		list_nav_title = f"{l.id} {l.title}"
+		list_nav_title = f"{l.id}: {l.title}"
 		if l.id == current_list.id:
 			list_nav_title += "(A)"
 		
@@ -306,7 +326,7 @@ def zeige(user):
 	current_tasks = []
 	if listen_text:
 		tasks = Task.query.filter_by(parent_list=current_list.id)
-		current_tasks = [i.title for i in tasks]
+		current_tasks = [f"{i.id}: {i.title} I:{i.important}" for i in tasks]
 	listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
 	
 	optionen = ['1: List Create', 
@@ -345,28 +365,38 @@ def zeige(user):
 		
 		return zeige(user)
 		
-	#List Loschen
+	#List Delete
 	elif antwort == '3':
-		
+		print('enter id for list to delete')
+		delete_list_id = input()
+		result = list_delete(delete_list_id)
+		print(result)
 		return zeige(user)
+		
 	#List Change
 	elif antwort == '4':
 		change_current_list(current_list)
 		return zeige(user)
 	
-	#Neue Aufgabe (Fur aktuelle liste) (oder auch list id hinzufugen?)
+	#New task for current list
 	elif antwort == '5':
-		
+		print("Enter the name of the task")
+		title = input()
+		result = task_create(title, current_list.id)  
+		print(result)
 		return zeige(user)
 	
-	#Aufgabe Fertig
+	#Task finish
 	elif antwort == '6':
-		
+		#task_update(id, neue)
 		return zeige(user)
 	
-	#aufgabe Loschen
+	#Task Delete
 	elif antwort == '7':
-		
+		print('enter the id for the task you want to delete')
+		delete_task_id = input()
+		result = task_delete(delete_task_id)
+		print(result)
 		return zeige(user)
 	
 	#zeig als Wichtig

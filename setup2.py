@@ -14,7 +14,7 @@ db.session.add(Twain)
 db.session.commit()
 
 u = User.query.all()
-
+#wenn ich fugen ein benutzer zufor dieses skript lauf, benutzer 1s ist eigenlich DAS benutzer, nicht keanu
 k = u[0]
 j = u[1]
 t = u[2]
@@ -24,9 +24,13 @@ print(f"{j.name}{j.email}{j.password}{j.time_created}")
 print(f"{t.name}{t.email}{t.password}{t.time_created}")
 
 #Keanu Listen
-freund_list = List(title="Keanu's Freunden", current=True, parent_user=k.id)
-familie_list = List(title="Keanu's Filme", current=True, parent_user=k.id)
-kleidung_list = List(title="Keanu's Kleidung", current=True, parent_user=k.id)
+#und hier es gibt ein aktuelle task aber wann ich hab schon ein benutzer zufor diese skript, 
+#ich erstelle ein andere aktuelle task und dann es gibt zwei! 
+#und dann die schleif lauft und wenn es triff die erste aktuelle task es nimmt es
+
+freund_list = List(title="Keanu's Freunden", current=False, parent_user=k.id)
+familie_list = List(title="Keanu's Filme", current=False, parent_user=k.id)
+kleidung_list = List(title="Keanu's Kleidung", current=False, parent_user=k.id)
 
 db.session.add(freund_list)
 db.session.add(familie_list)
