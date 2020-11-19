@@ -52,7 +52,7 @@ from sqlalchemy import (
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test14.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test15.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 

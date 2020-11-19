@@ -24,9 +24,9 @@ print(f"{j.name}{j.email}{j.password}{j.time_created}")
 print(f"{t.name}{t.email}{t.password}{t.time_created}")
 
 #Keanu Listen
-freund_list = List(title="Keanu's Freunden", parent_user=k.id)
-familie_list = List(title="Keanu's Filme", parent_user=k.id)
-kleidung_list = List(title="Keanu's Kleidung", parent_user=k.id)
+freund_list = List(title="Keanu's Freunden", current=True, parent_user=k.id)
+familie_list = List(title="Keanu's Filme", current=True, parent_user=k.id)
+kleidung_list = List(title="Keanu's Kleidung", current=True, parent_user=k.id)
 
 db.session.add(freund_list)
 db.session.add(familie_list)

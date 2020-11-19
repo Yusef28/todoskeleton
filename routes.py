@@ -23,8 +23,44 @@ from models import User, List, Task
 
 @app.route("/")
 def index():
-	return 'Hello, World'
+	print("Home")
+	print("Welcome to the DuMi app")
+	print("Enter 1 for Registration")
+	print("Enter 2 for Login")
+	print("Enter 3 to quit")
 
+	print("")
+	answer = input()
+	if answer == "1":
+		return registration()
+	elif answer == "2":
+		return login()	
+	elif answer == "3":
+		return 
+	return index()
+
+@app.route("/registration")
+def registration():
+	print("Registration")
+	print("")
+	
+	print("Enter a User Name")
+	name = input()
+	print("Enter an email")
+	email = input()
+	print("Enter an password")
+	password = input()
+	print("")
+	
+	#if the user creation works, go to login
+	result =  user_create(name, email, password)
+	if result:
+		print(result)
+		print("")
+		return login()	
+		
+	print('invalid registration')
+	return register()
 
 #User
 
@@ -37,7 +73,7 @@ def user_create(name, email, password):
 	db.session.add(user)
 	db.session.commit()
 	
-	default = List(title="Default", parent_user=user.id)
+	default = List(title="Default", current = True, parent_user=user.id)
 	db.session.add(default)
 	db.session.commit()
 	
@@ -136,7 +172,33 @@ def liste_tasks(id):
 		print(task.title)
 	return 'Listen gelesen'
 
+#find the list with current=True
+def find_current_list(lists):
+	for list in lists:
+		if list.current == True:
+			return list
 
+def change_current_list(old_list):
+
+	print('enter id for new list')
+	new_list_id = input()
+	
+	new_list = db.session.query(List).get(new_list_id)
+	
+	if not new_list:
+		return print("List ID not available")
+	elif new_list.id == old_list.id:
+		return print("You are already viewing this list")
+
+	old_list = db.session.query(List).get(old_list.id)
+	
+	
+	old_list.current, new_list.current = new_list.current, old_list.current
+	db.session.commit()
+	return print('Current list changed!')
+	
+	
+			
 #Task
 
 #C
@@ -159,7 +221,6 @@ def task_lesen(id):
 		print(task.title)
 	return 'Tasks gelesen'
 
-	
 #U
 @app.route("/task_aktualizieren")
 def task_aktualizieren(id, neue):
@@ -182,12 +243,12 @@ def task_loschen(id):
 #Login
 @app.route("/login")
 def login():
-
+	print("Login")
 	print("Geben sie ein Benutzer Name ein...")
 	name = input()
 	print("Geben sie ein Kenntwort ein...")
 	kenntwort = input()
-	
+	error = None
 	if not name:
 		error = 'Benutzername ist notig.'
 		print(error)
@@ -196,8 +257,11 @@ def login():
 		error = 'Kenntwort ist notig.'
 		print(error)
 		
+	if error:
+		return login()
+		
 	user = User.query.filter_by(name = name).first()#first weil anderfalls sie krieg ein increment objekt
-	print(user)
+	#print(user)
 	
 	
 	if not user:
@@ -213,7 +277,6 @@ def login():
 		#frag nach all listen und tasks
 		return zeige(user)
 		
-
 	return login()
 
 #Diese funktioniert als ein schiene HTML Datei
@@ -226,22 +289,30 @@ def zeige(user):
 	#listen = List.query.filter(parent_user=user.id)
 	listen = List.query.filter_by(parent_user = user.id)
 	
+	current_list = find_current_list(listen)
+	
+	print(f"current list is {current_list.title}")
+	
 	#list von listen
 	listen_text = []
 	for l in listen:
-		listen_text += [f"{l.id} {l.title}"]
+		list_nav_title = f"{l.id} {l.title}"
+		if l.id == current_list.id:
+			list_nav_title += "(A)"
+		
+		listen_text += [list_nav_title]
 	
 	#liste von aufgaben fur die erste liste (spater die aktuelle liste)
-	aktuelle_liste = []
+	current_tasks = []
 	if listen_text:
-		tasks = Task.query.filter_by(parent_list=listen[0].id)
-		aktuelle_liste = [i.title for i in tasks]
+		tasks = Task.query.filter_by(parent_list=current_list.id)
+		current_tasks = [i.title for i in tasks]
 	listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
 	
 	optionen = ['1: List Create', 
 				'2: List Edit',
 				'3: List Delete',
-				'4: List Read',
+				'4: List Change',
 				'--------------',
 				'5: New Task', 
 				'6: Task Complete',
@@ -250,12 +321,12 @@ def zeige(user):
 				'9: Log-out']
 				
 	#padding
-	ma = max(len(aktuelle_liste), len(listen_text), len(optionen))
-	for x in [listen_text, aktuelle_liste, optionen]:
+	ma = max(len(current_tasks), len(listen_text), len(optionen))
+	for x in [listen_text, current_tasks, optionen]:
 		x += [""]*(ma - len(x))
 
 	#erstelle ein tabelle und druck
-	table = [[x,y,z] for x,y,z in zip(listen_text, aktuelle_liste, optionen)]
+	table = [[x,y,z] for x,y,z in zip(listen_text, current_tasks, optionen)]
 	headers = ["Listen", "Aufgaben", "optionen"]
 	print(tabulate(table, headers, tablefmt="pretty"))
 	print("")
@@ -278,9 +349,9 @@ def zeige(user):
 	elif antwort == '3':
 		
 		return zeige(user)
-	#List Lesen
+	#List Change
 	elif antwort == '4':
-		
+		change_current_list(current_list)
 		return zeige(user)
 	
 	#Neue Aufgabe (Fur aktuelle liste) (oder auch list id hinzufugen?)
@@ -306,7 +377,7 @@ def zeige(user):
 	#Ausloggen
 	elif antwort == '9':
 		print('du bist ausgelogged')
-		return 
+		return index()
 
 		
 	return zeige(user)

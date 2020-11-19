@@ -41,7 +41,7 @@ class List(db.Model):
 	title = db.Column(db.String(80), unique=True, nullable=False)
 	parent_user = Column(Integer, ForeignKey('users.id'), nullable=False)
 	tasks = relationship("Task", cascade="all, delete")
-	#current = db.Column(Boolean, unique=False, default=False)
+	current = db.Column(Boolean, unique=False, default=False)
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
 	time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 
