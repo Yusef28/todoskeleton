@@ -15,6 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
+from tabulate import tabulate
 
 #Modules
 from app import db, app
@@ -204,6 +205,8 @@ def login():
 		print(error)
 		
 	else:
+		#start session?
+		#frag nach all listen und tasks
 		return zeige(user)
 		
 	db.session.delete(task)
@@ -215,28 +218,80 @@ def zeige(user):
 	print(f"Hallo wieder {user.name}")
 	print("Was wollen sie heute Nacht tun?")
 	print("hier sind seinem listen...")
+	print("")
 	#listen = List.query.filter(eltern_user=user.id)
 	listen = List.query.filter_by(eltern_user = user.id)
+	
+	#list von listen
+	listen_text = []
 	for l in listen:
-		print(f"{l.id}: {l.title}")
+		listen_text += [f"{l.id} {l.title}"]
+	
+	#liste von aufgaben fur die erste liste (spater die aktuelle liste)
+	aktuelle_liste = []
+	if listen_text:
+		tasks = Task.query.filter_by(eltern_list=listen[0].id)
+		aktuelle_liste = [i.title for i in tasks]
 		
-	print("oder vielleicht mochten Sie einfach ausloggen? Y/y:N/n")
+	optionen = ['1: list erstellen', 
+				'2: list berarbeiten',
+				'3: list loschen',
+				'4: list lesen',
+				'5: neue aufgabe', 
+				'6: aufgabe fertig',
+				'7: aufgabe loschen',
+				'8: aufgabe wichtig',
+				'9: auslogen']
+				
+	#padding
+	ma = max(len(aktuelle_liste), len(listen_text), len(optionen))
+	for x in [listen_text, aktuelle_liste, optionen]:
+		x += [""]*(ma - len(x))
+
+	#erstelle ein tabelle und druck
+	table = [[x,y,z] for x,y,z in zip(listen_text, aktuelle_liste, optionen)]
+	headers = ["Listen", "Aufgaben", "optionen"]
+	print(tabulate(table, headers, tablefmt="pretty"))
+	print("")
+		
 	antwort = input()
 	
-	if antwort in ['Y','y']:
+	if antwort == '1':
+		print('geben sie ein title ein')
+		title = input()
+		liste_erstellen(title, user.id)
+		return zeige(user)
+	elif antwort == '2':
+		
+		return zeige(user)
+	elif antwort == '3':
+		
+		return zeige(user)
+	elif antwort == '4':
+		
+		return zeige(user)
+	elif antwort == '5':
+		
+		return zeige(user)
+	elif antwort == '6':
+		
+		return zeige(user)
+	elif antwort == '7':
+		
+		return zeige(user)
+	elif antwort == '8':
+		
+		return zeige(user)
+	elif antwort == '9':
 		print('du bist ausgelogged')
 		return 
 
 		
-	return zeige()
+	return zeige(user)
 
 #Logout
 @app.route("/logout")
 def logout(id):
-	#task = Task.query.get(id)
-	#db.session.delete(task)
-	#db.session.commit()
-	#return
 	pass
 
 	
