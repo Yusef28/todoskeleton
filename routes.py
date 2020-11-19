@@ -23,40 +23,44 @@ from models import User, List, Task
 
 @app.route("/")
 def index():
-	return 'Hallo, Welt'
+	return 'Hello, World'
 
 
 #User
 
 #C
-@app.route("/benutzer_erstellen")
-def benutzer_erstellen(name, email, password):
+@app.route("/user_create")
+def user_create(name, email, password):
 	#>>>import routes
-	#>>>routes.benutzer_erstellen() -> 'Hallo, Welt'
-	benutzer = User(name=name, email=email, password=password)
-	db.session.add(benutzer)
+	#>>>routes.user_create() -> 'Hallo, Welt'
+	user = User(name=name, email=email, password=password)
+	db.session.add(user)
 	db.session.commit()
 	
-	default = List(title="Default", eltern_user=benutzer.id)
+	default = List(title="Default", parent_user=user.id)
 	db.session.add(default)
 	db.session.commit()
 	
-	task = Task(title="fang an", eltern_list=default.id)
+	task = Task(title="First Task", parent_list=default.id)
 	db.session.add(task)
 	db.session.commit()
-	return 'Benutzer *'+benutzer.name+'* erstellt!'
+	
+	#get data from form and validate
+	#if all is good, it will render the login form
+	#else return to this url
+	return 'User *'+user.name+'* created!'
 	
 #R 
-@app.route("/benutzer_lesen")
-def benutzer_lesen(id):
-	benutzer = User.query.get(id)
-	return 'Benutzer *'+benutzer.name+'* Gelesen!'
+@app.route("/user_read")
+def user_read(id):
+	user = User.query.get(id)
+	return 'User *'+user.name+'* read!'
 	
 #U
-@app.route("/benutzer_aktualizieren")
-def benutzer_aktualizieren(id, neue):
-	#benutzer = db.session.query(User).get(id)
-	#benutzer = User.query.filter_by(eltern_user = id)
+@app.route("/user_update")
+def user_update(id, neue):
+	#user = db.session.query(User).get(id)
+	#user = User.query.filter_by(parent_user = id)
 	benutzer = User.query.get(id)
 	alt = benutzer.name
 	benutzer.name = neue
@@ -75,7 +79,7 @@ def benutzer_loschen(id):
 
 @app.route("/benutzer_listen")
 def benutzer_listen(id):
-	listen = List.query.filter_by(eltern_user = id)
+	listen = List.query.filter_by(parent_user = id)
 	for liste in listen:
 		print(liste.title)
 	return 'Listen gelesen'
@@ -88,7 +92,7 @@ def benutzer_listen(id):
 def liste_erstellen(title, id):
 
 	benutzer = User.query.get(id)
-	liste = List(title=title, eltern_user=id)
+	liste = List(title=title, parent_user=id)
 	db.session.add(liste)
 	db.session.commit()
 
@@ -97,7 +101,7 @@ def liste_erstellen(title, id):
 #R 
 @app.route("/liste_lesen")
 def liste_lesen(id):
-	listen = List.query.filter_by(eltern_user=id)
+	listen = List.query.filter_by(parent_user=id)
 	for liste in listen:
 		print(liste.title)
 	return 'Listen gelesen'
@@ -127,7 +131,7 @@ def liste_loschen(id):
 
 @app.route("/liste_tasks")
 def liste_tasks(id):
-	tasks = Task.query.filter_by(eltern_list = id)
+	tasks = Task.query.filter_by(parent_list = id)
 	for task in tasks:
 		print(task.title)
 	return 'Listen gelesen'
@@ -140,7 +144,7 @@ def liste_tasks(id):
 def task_erstellen(title, id):
 
 	list = List.query.get(id)
-	task = Task(title=title, eltern_list=id)
+	task = Task(title=title, parent_list=id)
 	db.session.add(task)
 	db.session.commit()
 	
@@ -150,7 +154,7 @@ def task_erstellen(title, id):
 @app.route("/task_lesen")
 def task_lesen(id):
 	#list id hier
-	tasks = Task.query.filter_by(eltern_list=id)
+	tasks = Task.query.filter_by(parent_list=id)
 	for task in tasks:
 		print(task.title)
 	return 'Tasks gelesen'
@@ -209,18 +213,18 @@ def login():
 		#frag nach all listen und tasks
 		return zeige(user)
 		
-	db.session.delete(task)
-	db.session.commit()
-	return task_loschen()
 
+	return login()
+
+#Diese funktioniert als ein schiene HTML Datei
 @app.route("/zeige")
 def zeige(user):
 	print(f"Hallo wieder {user.name}")
 	print("Was wollen sie heute Nacht tun?")
 	print("hier sind seinem listen...")
 	print("")
-	#listen = List.query.filter(eltern_user=user.id)
-	listen = List.query.filter_by(eltern_user = user.id)
+	#listen = List.query.filter(parent_user=user.id)
+	listen = List.query.filter_by(parent_user = user.id)
 	
 	#list von listen
 	listen_text = []
@@ -230,18 +234,20 @@ def zeige(user):
 	#liste von aufgaben fur die erste liste (spater die aktuelle liste)
 	aktuelle_liste = []
 	if listen_text:
-		tasks = Task.query.filter_by(eltern_list=listen[0].id)
+		tasks = Task.query.filter_by(parent_list=listen[0].id)
 		aktuelle_liste = [i.title for i in tasks]
-		
-	optionen = ['1: list erstellen', 
-				'2: list berarbeiten',
-				'3: list loschen',
-				'4: list lesen',
-				'5: neue aufgabe', 
-				'6: aufgabe fertig',
-				'7: aufgabe loschen',
-				'8: aufgabe wichtig',
-				'9: auslogen']
+	listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
+	
+	optionen = ['1: List Create', 
+				'2: List Edit',
+				'3: List Delete',
+				'4: List Read',
+				'--------------',
+				'5: New Task', 
+				'6: Task Complete',
+				'7: Task Delete',
+				'8: Task Important',
+				'9: Log-out']
 				
 	#padding
 	ma = max(len(aktuelle_liste), len(listen_text), len(optionen))
@@ -256,32 +262,48 @@ def zeige(user):
 		
 	antwort = input()
 	
+	#Neue List Erstellen
 	if antwort == '1':
 		print('geben sie ein title ein')
 		title = input()
 		liste_erstellen(title, user.id)
 		return zeige(user)
+		
+	#List Bearbeiten
 	elif antwort == '2':
 		
 		return zeige(user)
+		
+	#List Loschen
 	elif antwort == '3':
 		
 		return zeige(user)
+	#List Lesen
 	elif antwort == '4':
 		
 		return zeige(user)
+	
+	#Neue Aufgabe (Fur aktuelle liste) (oder auch list id hinzufugen?)
 	elif antwort == '5':
 		
 		return zeige(user)
+	
+	#Aufgabe Fertig
 	elif antwort == '6':
 		
 		return zeige(user)
+	
+	#aufgabe Loschen
 	elif antwort == '7':
 		
 		return zeige(user)
+	
+	#zeig als Wichtig
 	elif antwort == '8':
 		
 		return zeige(user)
+	
+	#Ausloggen
 	elif antwort == '9':
 		print('du bist ausgelogged')
 		return 
@@ -293,7 +315,3 @@ def zeige(user):
 @app.route("/logout")
 def logout(id):
 	pass
-
-	
-
-

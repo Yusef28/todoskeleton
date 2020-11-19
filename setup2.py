@@ -24,9 +24,9 @@ print(f"{j.name}{j.email}{j.password}{j.time_created}")
 print(f"{t.name}{t.email}{t.password}{t.time_created}")
 
 #Keanu Listen
-freund_list = List(title="Keanu's Freunden", eltern_user=k.id)
-familie_list = List(title="Keanu's Filme", eltern_user=k.id)
-kleidung_list = List(title="Keanu's Kleidung", eltern_user=k.id)
+freund_list = List(title="Keanu's Freunden", parent_user=k.id)
+familie_list = List(title="Keanu's Filme", parent_user=k.id)
+kleidung_list = List(title="Keanu's Kleidung", parent_user=k.id)
 
 db.session.add(freund_list)
 db.session.add(familie_list)
@@ -44,10 +44,10 @@ print(fa.title)
 print(kl.title)
 
 
-#Keanu filme
-matrix = Task(title="Die Matrix", eltern_list=fr.id)
-matrixII = Task(title="Die Matrix II", eltern_list=fr.id)
-matrixIII = Task(title="Die Matrix Neuegeladen", eltern_list=fr.id)
+#Keanu films
+matrix = Task(title="The Matrix", parent_list=fr.id)
+matrixII = Task(title="The Matrix II", parent_list=fr.id)
+matrixIII = Task(title="The Matrix Reloaded", parent_list=fr.id)
 
 db.session.add(matrix)
 db.session.add(matrixII)

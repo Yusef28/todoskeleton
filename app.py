@@ -37,7 +37,7 @@ und die ganze erneue versuchen
 
 
 und spater
-db.session.add(Task(title="aufgabe 3", eltern_list=l[0].id))
+db.session.add(Task(title="aufgabe 3", parent_list=l[0].id))
 """
 
 #Built-in/Generic Imports
@@ -52,7 +52,7 @@ from sqlalchemy import (
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test13.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test14.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
