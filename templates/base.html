@@ -48,22 +48,30 @@
 	
 	{% if lists and current_list %}
 	<ul class="nav navbar-nav">
-	<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Lists <span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	{% for list in lists %}
-	
-	<!-- <ul class="nav navbar-nav"> -->
-	  <li><a href="{{ url_for('change_current_list', old_list_id=current_list.id, new_list_id=list.id) }}">{{ list.title }}</a></li>
-	{% endfor %}
+		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Lists <span class="caret"></span></a>
+		<ul class="dropdown-menu">
+		{% for list in lists %}
+		
+		<!-- <ul class="nav navbar-nav"> -->
+		  <li><a href="{{ url_for('change_current_list', old_list_id=current_list.id, new_list_id=list.id) }}">{{ list.title }}</a></li>
+		{% endfor %}
+		</ul>
+		
 	</ul>
+	<ul class="nav navbar-nav new-list-form">
+	<li>
+	<form action="{{ url_for('list_create') }}" method="POST">
+
+			<input name="new_list" id="new_list" type="text" class="form-control" placeholder="New List...">
+
+		</form>
 	</ul>
-	
 	{% endif %}
     
 	<ul class="nav navbar-nav navbar-right">
 	  {% if session['user_id'] %}
 	  <ul class="nav navbar-nav">
-	<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> {{ g.user.name}} <span class="caret"></span></a>
+	<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> <span class="glyphicon glyphicon-user"></span> {{ g.user.name}} <span class="caret"></span></a>
 	 <ul class="dropdown-menu">
 	  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 	  <li><a href="{{ url_for('user_delete') }}"><span class="glyphicon glyphicon-road"></span> Account Delete</a></li>
@@ -78,9 +86,6 @@
   </div>
 </nav>
 
-{% if lists %}
-<p> gefunden </p>
-{% endif %}
 
 {% block content %}
 		

@@ -21,6 +21,10 @@ form{
 	margin:0 auto;
 }
 
+.new-list-form{
+	padding:4px;
+	
+}
 .input-group{
     width:100%;
 
@@ -84,3 +88,8 @@ h2.list-title{
 
 }
 
+@media only screen and (max-width:450px){
+	.form{
+		width:100%;
+	}
+}

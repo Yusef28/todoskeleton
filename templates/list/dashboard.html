@@ -5,43 +5,17 @@
 <div class="container" id="main">
 
 
-    <br>
-	
 
-
-		<h2>Lists</h2>
-		<div class="form-group">
-
-		<form action="{{ url_for('list_create') }}" method="POST">
-
-			<input name="new_list" id="new_list" type="text" class="form-control" placeholder="New List...">
-
-		</form>
-
+	<br>
+	<div>
+	<h2>{{ current_list.title }}
+	<a href="#"> <span class="material-icons">edit</span></a>
+	<a href="{{ url_for('list_delete', id=current_list.id) }}"> <span class="material-icons">delete</span></a>
+	</h2>
 	</div>
-
 	<br>
-  <ul class="list-group">
-
-	{% for list in lists %}
-		<li class="list-group-item">
-		<div class="links-seite">
-		<div class="aufgabe-mitte"><p><span class="aufgabe-title">{{ list.title }}</span></p></div>
-		<div class="aufgabe-rechts">
-		<a href="{{ url_for('change_current_list', old_list_id=current_list.id, new_list_id=list.id) }}"> <span class="material-icons">{{ 'star' if list.id == current_list.id else 'star_border' }}</span></a>
-		<a href="#"> <span class="material-icons">edit</span></a>
-		<a href="{{ url_for('list_delete', id=list.id) }}"> <span class="material-icons">delete</span></a></div>
-		</div>
-		</li>
-	{% endfor %}
-	<br>
-
-
-	</ul>
-
 	
   <ul class="list-group">
-	<h2>Tasks</h2>
 	<div class="form-group">
 
 		<form action="{{ url_for('dashboard') }}" method="POST">
