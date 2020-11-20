@@ -10,28 +10,47 @@
   <link rel="stylesheet" href="styles.css" >
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
+	
+	<script>
+        document.addEventListener("DOMContentLoaded", function(event) { 
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>
+  </head>
 
 <body onLoad="document.getElementById('eingabe').focus();">
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">DuMich</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">DuMi</a>
     </div>
-
+	{% if session['user_id'] %}
 	<ul class="nav navbar-nav">
-	  <li><a href="{{ url_for('index') }}">Alle</a></li>
-	  <li><a href="#">Aktuelle</a></li>
-	  <li><a href="#">Abgeschlossen</a></li>
-	  <li><a href="#">Geloscht</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-th-list"></span> All</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-time"></span> Current</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-star"></span> Important</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-ok"></span> Completed</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-trash"></span> Deleted</a></li>
     </ul>
-
+	{% endif %}
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="{{ url_for('registration') }}"><span class="glyphicon glyphicon-user"></span>Registration</a></li>
-      <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
-	  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
-    </ul>
+	  {% if session['user_id'] %}
+	  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+	  <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ g.user.name}}</a></li>
+	  <li><a href="{{ url_for('user_delete') }}"><span class="glyphicon glyphicon-road"></span> Account Delete</a></li>
+
+	  
+	  {% else %}
+      <li><a href="{{ url_for('registration') }}"><span class="glyphicon glyphicon-user"></span> Registration</a></li>
+      <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+	  {% endif %}
+	</ul>
   </div>
 </nav>
 

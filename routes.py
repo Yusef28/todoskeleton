@@ -10,7 +10,7 @@ routes.py: Alle Routes
 import datetime
 
 #Libs
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, g, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
@@ -93,7 +93,8 @@ def user_create(name, email, password):
 	#get data from form and validate
 	#if all is good, it will render the login form
 	#else return to this url
-	return 'User *'+user.name+'* created!'
+	print('User *'+user.name+'* created!')
+	return True #redirect(url_for('logout'))
 	
 #R 
 @app.route("/user_read")
@@ -115,13 +116,15 @@ def user_update(id, neue):
 	return 'Benutzer name von !'+alt+'! nach *'+benutzer.name+'* Verandert!'
 
 #D 
-@app.route("/benutzer_loschen")
-def benutzer_loschen(id):
-	benutzer = User.query.get(id)
-	db.session.delete(benutzer)
+@app.route("/user_delete")
+def user_delete():
+	user = User.query.get(session['user_id'])
+	db.session.delete(user)
 	db.session.commit()
-	return 'Benutzer geloscht!'
-
+	print('User deleted!')
+	return redirect(url_for('logout'))
+	
+	
 @app.route("/benutzer_listen")
 def benutzer_listen(id):
 	listen = List.query.filter_by(parent_user = id)
@@ -261,10 +264,33 @@ def task_update(id, neue):
 	#user = user_read(session['user_id'])
 	return redirect(url_for('dashboard'))
 
+@app.route("/task_important/<int:id>")
+def task_important(id):
+	#task id hier
+	task = db.session.query(Task).get(id)
+	#old = task.title
+	task.important = 1 - 1*task.important
+	db.session.commit()
+	#print('task title von !'+old+'! nach *'+task.title+'* updated!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
+
+@app.route("/task_completed/<int:id>")
+def task_completed(id):
+	#task id hier
+	task = db.session.query(Task).get(id)
+	#old = task.title
+	task.completed = 1 - 1*task.completed
+	db.session.commit()
+	#print('task title von !'+old+'! nach *'+task.title+'* updated!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
+	
 #D 
 @app.route("/task_delete/<int:id>")
 def task_delete(id):
 	task = Task.query.get(id)
+	task.deleted = 1 - 1*task.deleted
 	db.session.delete(task)
 	db.session.commit()
 	print('List *'+task.title+'* deleted!')
@@ -467,3 +493,18 @@ def logout():
 	session.clear()
 	return redirect(url_for('index'))
 	
+#This is cool (if calls the following function
+#before every request. and there is a bp version.
+#aber ich bin mirnicht sicher wann ich g nutzen sollte, ausser
+#wann ich blaupausen nutzen.
+@app.before_request
+def load_logged_in_user():
+	#I think I needed "get()" instead of just session['key']
+	#for the case that session doesn't have a user_id yet?
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = user_read(user_id)
+		
