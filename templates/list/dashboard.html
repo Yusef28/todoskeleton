@@ -6,20 +6,21 @@
 
   <h2 class="list-title">Welcom to DuMi</h2>
     <br>
-	<div class="form-group">
+	
 
-		<form action="." method="POST">
 
-			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="Neue Aufgabe...">
+		<h2>Lists</h2>
+		<div class="form-group">
+
+		<form action="{{ url_for('list_create') }}" method="POST">
+
+			<input name="new_list" id="new_list" type="text" class="form-control" placeholder="New List...">
 
 		</form>
 
 	</div>
 
 	<br>
-
-
-		<h2>Lists</h2>
   <ul class="list-group">
 
 	{% for list in lists %}
@@ -39,7 +40,17 @@
 	
   <ul class="list-group">
 	<h2>Tasks</h2>
-	
+	<div class="form-group">
+
+		<form action="{{ url_for('dashboard') }}" method="POST">
+
+			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="New Task...">
+
+		</form>
+
+	</div>
+
+	<br>
 	{% for task in tasks %}
     <li class="list-group-item">
 	<div class="links-seite">

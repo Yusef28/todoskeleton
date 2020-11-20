@@ -134,14 +134,17 @@ def benutzer_listen(id):
 
 #C
 @app.route("/list_create", methods=('GET', 'POST'))
-def list_create(title, id):
+def list_create():
 
-	user = User.query.get(id)
-	liste = List(title=title, parent_user=id)
-	db.session.add(liste)
-	db.session.commit()
-
-	return 'List *'+liste.title+'* for user *'+user.name+'* created!'
+	if request.method == 'POST':
+				
+		list = List(title=request.form['new_list'], parent_user=session['user_id'])
+		db.session.add(list)
+		db.session.commit()
+		
+		print('List *'+list.title+'* for user with id: *'+str(session['user_id'])+'* created!')
+	
+	return redirect(url_for('dashboard'))
 	
 #R 
 @app.route("/liste_lesen")
@@ -323,22 +326,13 @@ def login():
 
 #Diese funktioniert als ein schiene HTML Datei
 #Post schickt data zu dasselb funktion zuruck
-@app.route("/dashboard", methods=('GET', 'POST'))
+
+
+
+
+@app.route("/dashboard", methods=("GET", "POST"))
 def dashboard():
-	
-	
-	
-	#render_template('auth/login.html')
-	#print(f"Hallo wieder {user.name}")
-	#print("Was wollen sie heute Nacht tun?")
-	#print("hier sind seinem listen...")
-	#print("")
-	#listen = List.query.filter(parent_user=user.id)
-	
-	
-	
-	
-	
+
 	#for current list I have some options
 	#1. make default un-deletable and if you delete current list, default becomes current list
 	#2. if you delete current list, there is no current list and use must select one
@@ -350,11 +344,8 @@ def dashboard():
 	
 	#The easiest method (fewest lines of code) is just make default un deletable and 
 	#if you delete the current list then default becomes current list(again). Catch the ball as it falls.
-	
-	
-	
 	#print(f"current list is {current_list.title}")
-	
+	print("was?")
 	if request.method == 'POST':
 		print('hit')
 		user = user_read(session['user_id'])
