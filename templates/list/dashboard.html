@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <h2 class="list-title">Welcom to DuMi</h2>
+    <br>
+	<div class="form-group">
+
+		<form action="." method="POST">
+
+			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="Neue Aufgabe...">
+
+		</form>
+
+	</div>
+
+	<br>
+
+
+		<h2>Lists</h2>
+  <ul class="list-group">
+
+	{% for list in lists %}
+		<li class="list-group-item">
+		<div class="links-seite">
+		<div class="aufgabe-mitte"><p><span class="aufgabe-title">{{ list.title }}</span></p></div>
+		<div class="aufgabe-rechts">
+		<a href="{{ url_for('change_current_list', old_list_id=current_list.id, new_list_id=list.id) }}"> <span class="material-icons">{{ 'star' if list.id == current_list.id else 'star_border' }}</span></a>
+		<a href="{{ url_for('list_delete', id=list.id) }}"> <span class="material-icons">delete</span></a></div>
+		</div>
+		</li>
+	{% endfor %}
+	<br>
+	<p>0 Aufgaben Abgeschlossen</p>
+
+	</ul>
+	
+  <ul class="list-group">
+	<h2>Tasks</h2>
+	
+	{% for task in tasks %}
+    <li class="list-group-item">
+	<div class="links-seite">
+	<div class="aufgabe-links"><a href="#"><span class="material-icons">{{ 'check' if task.completed else 'radio_button_unchecked' }}</span></a></div>
+	<div class="aufgabe-mitte"><p><span class="aufgabe-title">{{ task.title }}</span></p><p><span class="aufgabe-erstellt">Created on: {{task.time_created}}</span></p></div>
+	<div class="aufgabe-rechts">
+	<a href="#"> <span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span></a>
+	<a href="#"> <span class="material-icons">edit</span></a>
+	<a href="{{ url_for('task_delete', id=task.id) }}"> <span class="material-icons">delete</span></a></div>
+	</div>
+	</li>
+	
+	{% endfor %}
+	
+	<br>
+	<p>0 Aufgaben Abgeschlossen</p>
+
+</ul>
+	
+</div>
+{% endblock %}

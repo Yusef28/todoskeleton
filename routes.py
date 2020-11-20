@@ -10,7 +10,7 @@ routes.py: Alle Routes
 import datetime
 
 #Libs
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
@@ -99,7 +99,7 @@ def user_create(name, email, password):
 @app.route("/user_read")
 def user_read(id):
 	user = User.query.get(id)
-	return 'User *'+user.name+'* read!'
+	return user
 	
 #U
 @app.route("/user_update")
@@ -133,15 +133,15 @@ def benutzer_listen(id):
 #List
 
 #C
-@app.route("/liste_erstellen")
-def liste_erstellen(title, id):
+@app.route("/list_create", methods=('GET', 'POST'))
+def list_create(title, id):
 
-	benutzer = User.query.get(id)
+	user = User.query.get(id)
 	liste = List(title=title, parent_user=id)
 	db.session.add(liste)
 	db.session.commit()
 
-	return 'Liste *'+liste.title+'* fur benutzer *'+benutzer.name+'* erstellt!'
+	return 'List *'+liste.title+'* for user *'+user.name+'* created!'
 	
 #R 
 @app.route("/liste_lesen")
@@ -158,20 +158,22 @@ def liste_lesen(id):
 #krieg die liste VON ein benutzer und verandern die name
 #Die benutzer halt die id's fur seinem listen also ich muss nur
 #ein list id eingeben, ich hoffe
-@app.route("/liste_aktualizieren")
-def liste_aktualizieren(id, neue):
+@app.route("/liste_update")
+def liste_update(id, neue):
 	list = db.session.query(List).get(id)
 	alt = list.title
 	list.title = neue
 	db.session.commit()
-	return 'Liste title von !'+alt+'! nach *'+list.title+'* Verandert!'
+	print('Liste title von !'+alt+'! nach *'+list.title+'* Verandert!')
+	return redirect(url_for('dashboard'))
 
 #D 
-@app.route("/list_delete")
+@app.route("/list_delete/<int:id>")
 def list_delete(id):
 	list = List.query.get(id)
 	if list.title == "Default":
-		return 'You cannot delete the Default list!'
+		print('You cannot delete the Default list!')
+		return redirect(url_for('dashboard'))
 		
 	if list.current == True:
 		default = List.query.filter_by(title = "Default").first()
@@ -180,46 +182,50 @@ def list_delete(id):
 		
 	db.session.delete(list)
 	db.session.commit()
-	return 'List *'+list.title+'* Deleted!'
+	print('List *'+list.title+'* Deleted!')
+	return redirect(url_for('dashboard'))
 
 @app.route("/liste_tasks")
 def liste_tasks(id):
 	tasks = Task.query.filter_by(parent_list = id)
 	for task in tasks:
 		print(task.title)
-	return 'Listen gelesen'
+	print('Listen gelesen')
+	return redirect(url_for('dashboard'))
 
 #find the list with current=True
+@app.route("/find_current_list")
 def find_current_list(lists):
 	for list in lists:
 		if list.current == True:
 			return list
+			
+@app.route("/change_current_list/<int:old_list_id>/<int:new_list_id>/")
+def change_current_list(old_list_id, new_list_id):
 
-def change_current_list(old_list):
-
-	print('enter id for new list')
-	new_list_id = input()
+	#print('enter id for new list')
+	#new_list_id = input()
 	
 	new_list = db.session.query(List).get(new_list_id)
 	
 	if not new_list:
-		return print("List ID not available")
-	elif new_list.id == old_list.id:
-		return print("You are already viewing this list")
-
-	old_list = db.session.query(List).get(old_list.id)
+		print("List ID not available")
+	elif new_list.id == old_list_id:
+		print("You are already viewing this list")
+	else:
+		old_list = db.session.query(List).get(old_list_id)
+		old_list.current, new_list.current = new_list.current, old_list.current
+		db.session.commit()
 	
-	
-	old_list.current, new_list.current = new_list.current, old_list.current
-	db.session.commit()
-	return print('Current list changed!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
 	
 	
 			
 #Task
 
 #C
-@app.route("/task_create")
+@app.route("/task_create/<string:title>/<int:id>")
 def task_create(title, id):
 	
 	list = List.query.get(id)
@@ -227,7 +233,9 @@ def task_create(title, id):
 	db.session.add(task)
 	db.session.commit()
 	
-	return 'Task *'+task.title+'* for List *'+list.title+'* created!'
+	print('Task *'+task.title+'* for List *'+list.title+'* created!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
 	
 #R 
 #@app.route("/task_lesen")
@@ -246,15 +254,19 @@ def task_update(id, neue):
 	old = task.title
 	task.title = neue
 	db.session.commit()
-	return 'task title von !'+old+'! nach *'+task.title+'* updated!'
+	print('task title von !'+old+'! nach *'+task.title+'* updated!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
 
 #D 
-@app.route("/task_delete")
+@app.route("/task_delete/<int:id>")
 def task_delete(id):
 	task = Task.query.get(id)
 	db.session.delete(task)
 	db.session.commit()
-	return 'List *'+task.title+'* deleted!'
+	print('List *'+task.title+'* deleted!')
+	#user = user_read(session['user_id'])
+	return redirect(url_for('dashboard'))
 
 
 #Login 
@@ -268,6 +280,7 @@ def login():
 	print("Geben sie ein Kenntwort ein...")
 	kenntwort = input()
 	'''
+	
 	if request.method == 'POST':
 		name = request.form['benutzername']
 		password = request.form['kenntwort']
@@ -299,19 +312,31 @@ def login():
 		else:
 			#start session?
 			#frag nach all listen und tasks
-			return zeige(user)
+			session.clear()
+			session['user_id'] = user.id
+			
+			#with just dashboard() I get an onscreen error
+			#Badrequest
+			return redirect(url_for('dashboard'))
 		
 	return render_template('auth/login.html')
 
 #Diese funktioniert als ein schiene HTML Datei
-@app.route("/zeige")
-def zeige(user):
-	print(f"Hallo wieder {user.name}")
-	print("Was wollen sie heute Nacht tun?")
-	print("hier sind seinem listen...")
-	print("")
+#Post schickt data zu dasselb funktion zuruck
+@app.route("/dashboard", methods=('GET', 'POST'))
+def dashboard():
+	
+	
+	
+	#render_template('auth/login.html')
+	#print(f"Hallo wieder {user.name}")
+	#print("Was wollen sie heute Nacht tun?")
+	#print("hier sind seinem listen...")
+	#print("")
 	#listen = List.query.filter(parent_user=user.id)
-	listen = List.query.filter_by(parent_user = user.id)
+	
+	
+	
 	
 	
 	#for current list I have some options
@@ -326,60 +351,76 @@ def zeige(user):
 	#The easiest method (fewest lines of code) is just make default un deletable and 
 	#if you delete the current list then default becomes current list(again). Catch the ball as it falls.
 	
-	current_list = find_current_list(listen)
-	print(f"current list is {current_list.title}")
 	
-	#list of lists
-	listen_text = []
-	for l in listen:
-		list_nav_title = f"{l.id}: {l.title}"
-		if l.id == current_list.id:
-			list_nav_title += "(A)"
+	
+	#print(f"current list is {current_list.title}")
+	
+	if request.method == 'POST':
+		print('hit')
+		user = user_read(session['user_id'])
+		listen = List.query.filter_by(parent_user = user.id)
+		current_list = find_current_list(listen)
+		task_create(request.form['new_task'], current_list.id)
+		return redirect(url_for('dashboard'))
 		
-		listen_text += [list_nav_title]
-	
-	#liste von aufgaben fur die erste liste (spater die aktuelle liste)
-	current_tasks = []
-	if listen_text:
-		tasks = Task.query.filter_by(parent_list=current_list.id)
-		current_tasks = [f"{i.id}: {i.title} I:{i.important}" for i in tasks]
-	listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
-	
-	optionen = ['1: List Create', 
-				'2: List Edit',
-				'3: List Delete',
-				'4: List Change',
-				'--------------',
-				'5: New Task', 
-				'6: Task Complete',
-				'7: Task Delete',
-				'8: Task Important',
-				'9: Log-out']
-				
-	#padding
-	ma = max(len(current_tasks), len(listen_text), len(optionen))
-	for x in [listen_text, current_tasks, optionen]:
-		x += [""]*(ma - len(x))
+	#es muss entwieder oder sein
+	else:
+		user = user_read(session['user_id'])
+		listen = List.query.filter_by(parent_user = user.id)
+		current_list = find_current_list(listen)
+		#list of lists
+		listen_text = []
+		for l in listen:
+			list_nav_title = f"{l.id}: {l.title}"
+			if l.id == current_list.id:
+				list_nav_title += "(A)"
+			
+			listen_text += [list_nav_title]
+		
+		#liste von aufgaben fur die erste liste (spater die aktuelle liste)
+		current_tasks = []
+		if listen_text:
+			tasks = Task.query.filter_by(parent_list=current_list.id)
+			current_tasks = [f"{i.id}: {i.title} I:{i.important}" for i in tasks]
+		listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
+		
+		optionen = ['1: List Create', 
+					'2: List Edit',
+					'3: List Delete',
+					'4: List Change',
+					'--------------',
+					'5: New Task', 
+					'6: Task Complete',
+					'7: Task Delete',
+					'8: Task Important',
+					'9: Log-out']
+					
+		#padding
+		ma = max(len(current_tasks), len(listen_text), len(optionen))
+		for x in [listen_text, current_tasks, optionen]:
+			x += [""]*(ma - len(x))
 
-	#erstelle ein tabelle und druck
-	table = [[x,y,z] for x,y,z in zip(listen_text, current_tasks, optionen)]
-	headers = ["Listen", "Aufgaben", "optionen"]
-	print(tabulate(table, headers, tablefmt="pretty"))
-	print("")
+		#erstelle ein tabelle und druck
+		table = [[x,y,z] for x,y,z in zip(listen_text, current_tasks, optionen)]
+		headers = ["Listen", "Aufgaben", "optionen"]
+		print(tabulate(table, headers, tablefmt="pretty"))
+		print("")
 		
-	antwort = input()
+	#antwort = input()
 	
+	#Placenta
+	'''
 	#Neue List Erstellen
 	if antwort == '1':
 		print('geben sie ein title ein')
 		title = input()
 		liste_erstellen(title, user.id)
-		return zeige(user)
+		return dashboard(user)
 		
 	#List Bearbeiten
 	elif antwort == '2':
 		
-		return zeige(user)
+		return dashboard(user)
 		
 	#List Delete
 	elif antwort == '3':
@@ -387,12 +428,12 @@ def zeige(user):
 		delete_list_id = input()
 		result = list_delete(delete_list_id)
 		print(result)
-		return zeige(user)
+		return dashboard(user)
 		
 	#List Change
 	elif antwort == '4':
 		change_current_list(current_list)
-		return zeige(user)
+		return dashboard(user)
 	
 	#New task for current list
 	elif antwort == '5':
@@ -400,12 +441,12 @@ def zeige(user):
 		title = input()
 		result = task_create(title, current_list.id)  
 		print(result)
-		return zeige(user)
+		return dashboard(user)
 	
 	#Task finish
 	elif antwort == '6':
 		#task_update(id, neue)
-		return zeige(user)
+		return dashboard(user)
 	
 	#Task Delete
 	elif antwort == '7':
@@ -413,22 +454,25 @@ def zeige(user):
 		delete_task_id = input()
 		result = task_delete(delete_task_id)
 		print(result)
-		return zeige(user)
+		return dashboard(user)
 	
 	#zeig als Wichtig
 	elif antwort == '8':
 		
-		return zeige(user)
+		return dashboard(user)
 	
 	#Ausloggen
 	elif antwort == '9':
 		print('du bist ausgelogged')
-		return index()
-
-		
-	return zeige(user)
-
+		return logout()
+	'''
+	
+	#return dashboard(user)
+	return render_template('list/dashboard.html', lists = listen, tasks = tasks, current_list = current_list)
+	
 #Logout
 @app.route("/logout")
-def logout(id):
-	pass
+def logout():
+	session.clear()
+	return redirect(url_for('index'))
+	

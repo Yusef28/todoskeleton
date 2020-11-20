@@ -54,6 +54,7 @@ from sqlalchemy import (
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test20.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'StArFox64'
 db = SQLAlchemy(app)
 
 #Modules
