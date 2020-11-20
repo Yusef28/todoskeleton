@@ -32,7 +32,10 @@ class User(db.Model):
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
 	#time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 	lists = relationship("List", cascade="all, delete")
-
+	#list_count = db.Column(db.Integer)
+	
+	#current_list = db.Column(db.Integer)
+	
 class List(db.Model):
 
 	__tablename__ = "lists"
@@ -43,6 +46,12 @@ class List(db.Model):
 	tasks = relationship("Task", cascade="all, delete")
 	current = db.Column(Boolean, unique=False, default=False)
 	time_created = db.Column(DateTime(timezone=True), server_default=func.now())
+	#current_count = db.Column(db.Integer)
+	#important_count = db.Column(db.Integer)
+	#deleted_count = db.Column(db.Integer)
+	#completed_count = db.Column(db.Integer)
+	
+	
 	#time_updated = db.Column(DateTime(timezone=True), onupdate=func.now())
 
 

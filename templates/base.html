@@ -21,6 +21,8 @@
             localStorage.setItem('scrollpos', window.scrollY);
         };
     </script>
+	
+
   </head>
 
 <body onLoad="document.getElementById('eingabe').focus();">
@@ -32,12 +34,16 @@
     </div>
 	{% if session['user_id'] %}
 	<ul class="nav navbar-nav">
-	  <li><a href="#"><span class="glyphicon glyphicon-th-list"></span> All</a></li>
-	  <li><a href="#"><span class="glyphicon glyphicon-time"></span> Current</a></li>
-	  <li><a href="#"><span class="glyphicon glyphicon-star"></span> Important</a></li>
-	  <li><a href="#"><span class="glyphicon glyphicon-ok"></span> Completed</a></li>
-	  <li><a href="#"><span class="glyphicon glyphicon-trash"></span> Deleted</a></li>
+	<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Filters <span class="caret"></span></a>
+	 <ul class="dropdown-menu">
+	<!-- <ul class="nav navbar-nav"> -->
+	  <li><a href="{{ url_for('dashboard') }}"><span class="glyphicon glyphicon-th-list"></span> All</a></li>
+	  <li><a href="{{ url_for('dashboard_current') }}"><span class="glyphicon glyphicon-time"></span> Current</a></li>
+	  <li><a href="{{ url_for('dashboard_important') }}"><span class="glyphicon glyphicon-star"></span> Important</a></li>
+	  <li><a href="{{ url_for('dashboard_completed') }}"><span class="glyphicon glyphicon-ok"></span> Completed</a></li>
+	  <li><a href="{{ url_for('dashboard_deleted') }}"><span class="glyphicon glyphicon-trash"></span> Deleted</a></li>
     </ul>
+	</ul>
 	{% endif %}
     <ul class="nav navbar-nav navbar-right">
 	  {% if session['user_id'] %}

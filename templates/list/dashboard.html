@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container" id="main">
 
-  <h2 class="list-title">Welcome to DuMi</h2>
+
     <br>
 	
 
@@ -35,9 +35,10 @@
 		</li>
 	{% endfor %}
 	<br>
-	<p>0 Aufgaben Abgeschlossen</p>
+
 
 	</ul>
+
 	
   <ul class="list-group">
 	<h2>Tasks</h2>
@@ -58,16 +59,21 @@
 	<div class="aufgabe-links"><a href="{{ url_for('task_completed', id=task.id) }}"><span class="material-icons">{{ 'check' if task.completed else 'radio_button_unchecked' }}</span></a></div>
 	<div class="aufgabe-mitte"><p><span class="aufgabe-title">{{ task.title }}</span></p><p><span class="aufgabe-erstellt">Created on: {{task.time_created}}</span></p></div>
 	<div class="aufgabe-rechts">
-	<a href="{{ url_for('task_important', id=task.id) }}"> <span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span></a>
 	
-	<a href="{{ url_for('task_delete', id=task.id) }}"> <span class="material-icons">delete</span></a></div>
+		{% if task.deleted == False %}
+		<a href="{{ url_for('task_important', id=task.id) }}"> <span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span></a>
+		{% else %}
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> <span class="material-icons"> restore_from_trash</span></a>
+		{% endif %}
+		<a href="{{ url_for('task_delete', id=task.id) }}"> <span class="material-icons"> delete</span></a>
+		
 	</div>
 	</li>
 	
 	{% endfor %}
 	
 	<br>
-	<p>0 Aufgaben Abgeschlossen</p>
+
 
 </ul>
 	

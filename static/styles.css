@@ -1,5 +1,4 @@
 
-
 .fest{
 	display:inline-block;
 	color:red;
@@ -16,10 +15,18 @@ form{
     display:inline;
 }
 
+.form{
+	
+	width:400px;
+	margin:0 auto;
+}
+
 .input-group{
     width:100%;
 
 }
+
+
 
 .clear-fix{
 	clear:both;
@@ -76,3 +83,4 @@ h2.list-title{
 	}
 
 }
+

@@ -273,30 +273,49 @@ def task_important(id):
 	db.session.commit()
 	#print('task title von !'+old+'! nach *'+task.title+'* updated!')
 	#user = user_read(session['user_id'])
-	return redirect(url_for('dashboard'))
+	#return redirect(url_for('dashboard'))
+	return  redirect(request.referrer)
 
 @app.route("/task_completed/<int:id>")
 def task_completed(id):
 	#task id hier
 	task = db.session.query(Task).get(id)
 	#old = task.title
-	task.completed = 1 - 1*task.completed
+	#task.completed = True
+	#task.current = False
+	
+	#we only really need either current or completed
+	task.current, task.completed = task.completed, task.current 
 	db.session.commit()
 	#print('task title von !'+old+'! nach *'+task.title+'* updated!')
 	#user = user_read(session['user_id'])
-	return redirect(url_for('dashboard'))
+	#return redirect(url_for('dashboard'))
+	return  redirect(request.referrer)
 	
 #D 
 @app.route("/task_delete/<int:id>")
 def task_delete(id):
-	task = Task.query.get(id)
-	task.deleted = 1 - 1*task.deleted
-	db.session.delete(task)
-	db.session.commit()
-	print('List *'+task.title+'* deleted!')
-	#user = user_read(session['user_id'])
-	return redirect(url_for('dashboard'))
+	task = db.session.query(Task).get(id)
+	if task.deleted == False:
+		task.deleted = True
+		db.session.commit()
+		print('Task *'+task.title+'* moved to trash!')
+		print('Set task *'+task.title+'* delete to *'+str(task.deleted))
+	elif task.deleted == True:
+		db.session.delete(task)
+		db.session.commit()
+		print('Task *'+task.title+'* deleted permenantly!')
+	return  redirect(request.referrer)
 
+@app.route("/task_delete_undo/<int:id>")
+def task_delete_undo(id):
+	task = db.session.query(Task).get(id)
+	task.deleted = False
+	db.session.commit()
+	print('Task *'+task.title+'* restored!')
+	print('Set task *'+task.title+'* delete to *'+str(task.deleted))
+	
+	return  redirect(request.referrer)
 
 #Login 
 @app.route("/login", methods=('GET', 'POST'))
@@ -353,7 +372,46 @@ def login():
 #Diese funktioniert als ein schiene HTML Datei
 #Post schickt data zu dasselb funktion zuruck
 
+@app.route("/dashboard_lists")
+def dashboard_lists():
+	pass
 
+
+@app.route("/dashboard_current")
+def dashboard_current():
+	user = user_read(session['user_id'])
+	lists = List.query.filter_by(parent_user = user.id)
+	current_list = find_current_list(lists)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, current=True, deleted=False)
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	
+	
+@app.route("/dashboard_important")
+def dashboard_important():
+	user = user_read(session['user_id'])
+	lists = List.query.filter_by(parent_user = user.id)
+	current_list = find_current_list(lists)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, important=True, deleted=False)
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	
+
+@app.route("/dashboard_completed")
+def dashboard_completed():
+	user = user_read(session['user_id'])
+	lists = List.query.filter_by(parent_user = user.id)
+	current_list = find_current_list(lists)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, completed=True, deleted=False)
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	
+	
+@app.route("/dashboard_deleted")
+def dashboard_deleted():
+	user = user_read(session['user_id'])
+	lists = List.query.filter_by(parent_user = user.id)
+	current_list = find_current_list(lists)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, deleted=True)
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	
 
 
 @app.route("/dashboard", methods=("GET", "POST"))
@@ -397,7 +455,7 @@ def dashboard():
 		#liste von aufgaben fur die erste liste (spater die aktuelle liste)
 		current_tasks = []
 		if listen_text:
-			tasks = Task.query.filter_by(parent_list=current_list.id)
+			tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
 			current_tasks = [f"{i.id}: {i.title} I:{i.important}" for i in tasks]
 		listen_text = ["D:Default", "I:Important", "C:Completed", "L:Deleted","--------"] + listen_text
 		

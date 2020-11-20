@@ -7,26 +7,27 @@
 <br>
 <br>
 
-  <form method="post" class="form">
+<div class="form">
+  <form method="post" >
   
     <h1>Login</h1>
-	<div class="eingabe_kiste">
+	<div class="form-group">
 	<label for="benutzername">Name</label><br>
-    <input class="input" name="benutzername" id="benutzername" value="" required>
+    <input class="form-control" name="benutzername" id="benutzername" value="" required>
 	</div>
 	<br>
 	
-	<div class="eingabe_kiste">
+	<div class="form-group">
 	<label for="kenntwort">password</label><br>
-	<input class="input" type="kenntwort" name="kenntwort" id="kenntwort" required>
+	<input class="form-control" type="kenntwort" name="kenntwort" id="kenntwort" required>
 	</div>
 	<br>
 
-	<div class="eingabe_kiste">
-    <input class="input" type="submit" value="Log In">
+	<div class="form-group">
+    <input class="form-control" type="submit" value="Log In">
 	</div>
 	
   </form>
-
+	</div>
 	
 {% endblock %}
