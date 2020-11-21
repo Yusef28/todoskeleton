@@ -56,13 +56,16 @@ def liste_update(id, neue):
  
 @app.route("/list_delete/<int:id>")
 def list_delete(id):
-	list = List.query.get(id)
+	list = db.session.query(List).get(id)
 	if list.title == "Default":
 		print('You cannot delete the Default list!')
 		return redirect(url_for('dashboard'))
 		
 	if list.current == True:
-		default = List.query.filter_by(title = "Default").first()
+		#I needed to search using default as title AND session id otherwise I get the first default List which
+		#could be from another user!
+		default = db.session.query(List).filter_by(title = "Default", parent_user = session['user_id']).first()
+		print(default.title)
 		list.current = False
 		default.current = True
 		
@@ -86,6 +89,7 @@ def liste_tasks(id):
 def find_current_list(lists):
 	for list in lists:
 		if list.current == True:
+			print('gefunden')
 			return list
 			
 			

@@ -21,22 +21,25 @@ from tabulate import tabulate
 from flask_app import db, app
 from models import User, List, Task
 
+from list_routes import find_current_list #for task_create()
 
-@app.route("/task_create/<string:title>/<int:id>")
-def task_create(title, id):
+@app.route("/task_create", methods=('GET', 'POST'))
+def task_create():
 	
-	list = List.query.get(id)
-	task = Task(title=title, parent_list=id)
-	db.session.add(task)
-	db.session.commit()
+	if request.method == 'POST':
+		lists = List.query.filter_by(parent_user = session['user_id'])
+		current_list = find_current_list(lists) #needs the list_routes module
+		title = request.form['new_task']
+		new_task = Task(title=title, parent_list=current_list.id)
+		db.session.add(new_task)
+		db.session.commit()
 	
-	print('Task *'+task.title+'* for List *'+list.title+'* created!')
-	#user = user_read(session['user_id'])
+		print('Task *'+new_task.title+'* for List *'+current_list.title+'* created!')
+		flash('Task *'+new_task.title+'* for List *'+current_list.title+'* created!')
 	return redirect(url_for('dashboard'))
 	
 @app.route("/task_update")
 def task_update(id, neue):
-	#task id hier
 	task = db.session.query(Task).get(id)
 	old = task.title
 	task.title = neue

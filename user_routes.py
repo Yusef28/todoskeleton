@@ -24,7 +24,7 @@ from models import User, List, Task
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
-
+	
 	if request.method == 'POST':
 		name = request.form['username']
 		password = request.form['password']
@@ -132,7 +132,7 @@ def user_create(name, email, password):
 	db.session.commit()
 	
 	print('User *'+user.name+'* created!')
-	return
+	return True
 	
 
 @app.route("/user_read")

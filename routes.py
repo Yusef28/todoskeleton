@@ -75,24 +75,16 @@ def dashboard_deleted():
 	
 
 
-@app.route("/dashboard", methods=("GET", "POST"))
+@app.route("/dashboard")
 def dashboard():
 
-	#add task to current list???
-	if request.method == 'POST':
-		user = user_read(session['user_id'])
-		lists = List.query.filter_by(parent_user = user.id)
-		current_list = find_current_list(lists)
-		task_create(request.form['new_task'], current_list.id)
-		
-		return redirect(url_for('dashboard'))
+
 		
 	#get all lists and tasks for that list
-	else:
-		user = user_read(session['user_id'])
-		lists = List.query.filter_by(parent_user = user.id)
-		current_list = find_current_list(lists)
-		tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
+	user = user_read(session['user_id'])
+	lists = db.session.query(List).filter_by(parent_user = user.id)
+	current_list = find_current_list(lists)
+	tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
 
 
 	#return dashboard(user)
