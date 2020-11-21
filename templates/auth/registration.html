@@ -5,6 +5,13 @@
 {% block content %}
 
 <br>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div class="notification is-danger">
+        {{ messages[0] }}
+    </div>
+{% endif %}
+{% endwith %}
 <br>
 
 <div class="form">
@@ -12,8 +19,8 @@
   
     <h1>Registration</h1>
 	<div class="form-group">
-	<label for="benutzername">Name</label><br>
-    <input class="form-control" name="benutzername" id="benutzername" value="" required>
+	<label for="username">Name</label><br>
+    <input class="form-control" name="username" id="username" value="" required>
 	</div>
 	<br>
 	
@@ -24,19 +31,19 @@
 	<br>
 	
 	<div class="form-group">
-	<label for="kenntwort">password</label><br>
-	<input class="form-control" type="kenntwort" name="kenntwort" id="kenntwort" required>
+	<label for="password">password</label><br>
+	<input class="form-control" type="password" name="password" id="password" required>
 	</div>
 	<br>
 	
 	<div class="form-group">
-	<label for="kenntwort2">verify password</label><br>
-	<input class="form-control" type="kenntwort2" name="kenntwort2" id="" required>
+	<label for="password2">verify password</label><br>
+	<input class="form-control" type="password2" name="password2" id="" required>
 	</div>
 	<br>
 	
 	
-	<div class="eingabe_kiste">
+	<div class="form-group">
     <input class="input" type="submit" value="Log In">
 	</div>
 	

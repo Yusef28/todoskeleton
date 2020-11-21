@@ -1,8 +1,4 @@
 
-.fest{
-	display:inline-block;
-	color:red;
-}
 
 body{
 	background-color:#eeeeee;
@@ -22,14 +18,12 @@ form{
 }
 
 .new-list-form{
-	padding:4px;
+	padding:6px;
 	
 }
 .input-group{
     width:100%;
-
 }
-
 
 
 .clear-fix{
@@ -48,31 +42,31 @@ form{
 	}
 
 
-.links-seite{
+.left-side{
 	display:flex;
 	justify-content:left;
 	align-items:center;
 	margin:0px;
 }
 
-.aufgabe-title{
+.task-title{
 	font-size:15px;
 }
 
-.aufgabe-erstellt{
+.task-created{
 	font-size:12px;
 }
 
-.aufgabe-links{
+.task-left{
 	margin:0px;
 	margin-right:15px;
 }
 
-.aufgabe-mitte{
+.task-middle{
 	margin:0px;
 }
 
-.aufgabe-rechts{
+.task-right{
 	margin:0px;
 	margin-left:auto;
 }

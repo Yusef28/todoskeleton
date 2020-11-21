@@ -18,7 +18,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime, Date
 #Modules
-from app import db
+from flask_app import db
 
 class User(db.Model):
 

@@ -10,7 +10,7 @@ routes.py: Alle Routes
 import datetime
 
 #Libs
-from flask import Flask, g, redirect, render_template, request, url_for, session
+from flask import Flask, g, redirect, render_template, request, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
@@ -18,7 +18,7 @@ from sqlalchemy import (
 from tabulate import tabulate
 
 #Modules
-from app import db, app
+from flask_app import db, app
 from models import User, List, Task
 
 @app.route("/")
@@ -42,7 +42,7 @@ def index():
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
-	print("Registration")
+	flash("Registration")
 	print("")
 	
 	'''
@@ -56,8 +56,8 @@ def registration():
 	'''
 	
 	if request.method == 'POST':
-		name = request.form['benutzername']
-		password = request.form['kenntwort']
+		name = request.form['username']
+		password = request.form['password']
 		email = request.form['email']
 		#if the user creation works, go to login
 		result =  user_create(name, email, password)
@@ -321,17 +321,11 @@ def task_delete_undo(id):
 @app.route("/login", methods=('GET', 'POST'))
 def login():
 
-	'''
-	print("Login")
-	print("Geben sie ein Benutzer Name ein...")
-	name = input()
-	print("Geben sie ein Kenntwort ein...")
-	kenntwort = input()
-	'''
+
 	
 	if request.method == 'POST':
-		name = request.form['benutzername']
-		password = request.form['kenntwort']
+		name = request.form['username']
+		password = request.form['password']
 		
 		error = None
 		if not name:
