@@ -23,61 +23,85 @@ from models import User, List, Task
 
 @app.route("/")
 def index():
-	'''
-	print("Home")
-	print("Welcome to the DuMi app")
-	print("Enter 1 for Registration")
-	print("Enter 2 for Login")
-	print("Enter 3 to quit")
-
-	print("")
-	answer = input()
-	if answer == "1":
-		return redirect(url_for('registration'))
-	elif answer == "2":
-		return redirect(url_for('login'))
-	'''
-
 	return render_template('auth/index.html')
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
-	flash("Registration")
-	print("")
-	
-	'''
-	print("Enter a User Name")
-	name = input()
-	print("Enter an email")
-	email = input()
-	print("Enter an password")
-	password = input()
-	print("")
-	'''
-	
+
 	if request.method == 'POST':
 		name = request.form['username']
 		password = request.form['password']
+		confirmation = request.form['password2']
 		email = request.form['email']
-		#if the user creation works, go to login
+		error = None
+		
+		if User.query.filter_by(name = name).first():
+			error = 'user name already registered.'
+			flash(error)
+			print(error)
+			
+		if User.query.filter_by(email = email).first():
+			error = 'user email already registered.'
+			flash(error)
+			print(error)
+		
+		if len(password) < 8:
+			error = 'password must be at least 8 characters long.'
+			flash(error)
+			print(error)
+		
+		if password != confirmation:
+			error = 'password and confirmation password must match.'
+			flash(error)
+			print(error)
+			
+		if error:
+			return render_template('auth/registration.html')
+			
 		result =  user_create(name, email, password)
 		
 		if result:
+			flash(result)
 			print(result)
-			print("")
 			return redirect(url_for('login'))
 		
-	#print('invalid registration')
-	#return registration()
+
 	return render_template('auth/registration.html')
 	
+#Login 
+@app.route("/login", methods=('GET', 'POST'))
+def login():
+
+	if request.method == 'POST':
+		name = request.form['username']
+		password = request.form['password']		
+		error = None
+		user = User.query.filter_by(name = name).first()#first or else you get an iterator
+		
+		if not user:
+			error = 'User not found.'
+			print(error)
+			flash(error)
+			
+		elif user.password != password:
+			error = 'User name or password False.'
+			print(error)
+			flash(error)
+			
+		if not error:
+			session.clear()
+			session['user_id'] = user.id
+			#with just dashboard() I get an onscreen error Badrequest
+			return redirect(url_for('dashboard'))
+		
+	return render_template('auth/login.html')
+
 #User
 
 #C
 @app.route("/user_create")
 def user_create(name, email, password):
-	#>>>import routes
-	#>>>routes.user_create() -> 'Hallo, Welt'
+
 	user = User(name=name, email=email, password=password)
 	db.session.add(user)
 	db.session.commit()
@@ -317,54 +341,7 @@ def task_delete_undo(id):
 	
 	return  redirect(request.referrer)
 
-#Login 
-@app.route("/login", methods=('GET', 'POST'))
-def login():
 
-
-	
-	if request.method == 'POST':
-		name = request.form['username']
-		password = request.form['password']
-		
-		error = None
-		if not name:
-			error = 'You need to enter a user name.'
-			print(error)
-			
-		elif not password:
-			error = 'You need to enter a password.'
-			print(error)
-			
-		if error:
-			return login()
-			
-		user = User.query.filter_by(name = name).first()#first weil anderfalls sie krieg ein increment objekt
-		#print(user)
-		
-		
-		if not user:
-			error = 'User not found.'
-			print(error)
-			
-		elif user.password != password:
-			error = 'User name or password False.'
-			print(error)
-			
-		else:
-			#start session?
-			#frag nach all listen und tasks
-			session.clear()
-			session['user_id'] = user.id
-			
-			#with just dashboard() I get an onscreen error
-			#Badrequest
-			return redirect(url_for('dashboard'))
-		
-	return render_template('auth/login.html')
-
-#Diese funktioniert als ein schiene HTML Datei
-#Post schickt data zu dasselb funktion zuruck
 
 @app.route("/dashboard_lists")
 def dashboard_lists():
@@ -411,19 +388,7 @@ def dashboard_deleted():
 @app.route("/dashboard", methods=("GET", "POST"))
 def dashboard():
 
-	#for current list I have some options
-	#1. make default un-deletable and if you delete current list, default becomes current list
-	#2. if you delete current list, there is no current list and use must select one
-	#3. if you have no lists and add one, it becomes the current list
-	#4. if you have no lists and add one, you still have to select it
-	#5. the app starts with a default list and it is current
-	#6. the app starts with a default list but it is not current, you have to select it
-	#7. you can select "Home" or some other option and then have no lists selected (so it's a state instead of an accident)
-	
-	#The easiest method (fewest lines of code) is just make default un deletable and 
-	#if you delete the current list then default becomes current list(again). Catch the ball as it falls.
-	#print(f"current list is {current_list.title}")
-	print("was?")
+
 	if request.method == 'POST':
 		print('hit')
 		user = user_read(session['user_id'])
@@ -432,7 +397,6 @@ def dashboard():
 		task_create(request.form['new_task'], current_list.id)
 		return redirect(url_for('dashboard'))
 		
-	#es muss entwieder oder sein
 	else:
 		user = user_read(session['user_id'])
 		listen = List.query.filter_by(parent_user = user.id)
@@ -475,67 +439,7 @@ def dashboard():
 		print(tabulate(table, headers, tablefmt="pretty"))
 		print("")
 		
-	#antwort = input()
-	
-	#Placenta
-	'''
-	#Neue List Erstellen
-	if antwort == '1':
-		print('geben sie ein title ein')
-		title = input()
-		liste_erstellen(title, user.id)
-		return dashboard(user)
-		
-	#List Bearbeiten
-	elif antwort == '2':
-		
-		return dashboard(user)
-		
-	#List Delete
-	elif antwort == '3':
-		print('enter id for list to delete')
-		delete_list_id = input()
-		result = list_delete(delete_list_id)
-		print(result)
-		return dashboard(user)
-		
-	#List Change
-	elif antwort == '4':
-		change_current_list(current_list)
-		return dashboard(user)
-	
-	#New task for current list
-	elif antwort == '5':
-		print("Enter the name of the task")
-		title = input()
-		result = task_create(title, current_list.id)  
-		print(result)
-		return dashboard(user)
-	
-	#Task finish
-	elif antwort == '6':
-		#task_update(id, neue)
-		return dashboard(user)
-	
-	#Task Delete
-	elif antwort == '7':
-		print('enter the id for the task you want to delete')
-		delete_task_id = input()
-		result = task_delete(delete_task_id)
-		print(result)
-		return dashboard(user)
-	
-	#zeig als Wichtig
-	elif antwort == '8':
-		
-		return dashboard(user)
-	
-	#Ausloggen
-	elif antwort == '9':
-		print('du bist ausgelogged')
-		return logout()
-	'''
-	
+
 	#return dashboard(user)
 	return render_template('list/dashboard.html', lists = listen, tasks = tasks, current_list = current_list)
 	
@@ -547,8 +451,7 @@ def logout():
 	
 #This is cool (if calls the following function
 #before every request. and there is a bp version.
-#aber ich bin mirnicht sicher wann ich g nutzen sollte, ausser
-#wann ich blaupausen nutzen.
+
 @app.before_request
 def load_logged_in_user():
 	#I think I needed "get()" instead of just session['key']

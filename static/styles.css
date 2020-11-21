@@ -11,6 +11,12 @@ form{
     display:inline;
 }
 
+.is-danger{
+	color:red;
+	font-size:20px;
+	
+}
+
 .form{
 	
 	width:400px;

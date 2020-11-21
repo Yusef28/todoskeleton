@@ -5,13 +5,6 @@
 {% block content %}
 
 <br>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    <div class="notification is-danger">
-        {{ messages[0] }}
-    </div>
-{% endif %}
-{% endwith %}
 <br>
 
 <div class="form">
@@ -37,17 +30,28 @@
 	<br>
 	
 	<div class="form-group">
-	<label for="password2">verify password</label><br>
+	<label for="password2">confirm password</label><br>
 	<input class="form-control" type="password2" name="password2" id="" required>
 	</div>
 	<br>
 	
 	
 	<div class="form-group">
-    <input class="input" type="submit" value="Log In">
+    <input class="form-control" type="submit" value="Register">
 	</div>
 	
   </form>
+  
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+			<div class="notification is-danger">
+				{{ message }}
+			</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+	
 </div>
 	
 {% endblock %}
