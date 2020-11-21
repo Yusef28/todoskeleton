@@ -9,8 +9,11 @@
 	<br>
 	<div>
 	<h2>{{ current_list.title }}
+	
+	{% if current_list.title != "Default" %}
 	<a href="#"> <span class="material-icons">edit</span></a>
 	<a href="{{ url_for('list_delete', id=current_list.id) }}"> <span class="material-icons">delete</span></a>
+	{% endif %}
 	</h2>
 	</div>
 	<br>
@@ -20,7 +23,7 @@
 
 		<form action="{{ url_for('dashboard') }}" method="POST">
 
-			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="New Task...">
+			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="New Task..." required>
 
 		</form>
 
