@@ -23,7 +23,8 @@
 
 		<form action="{{ url_for('task_create') }}" method="POST">
 
-			<input name="new_task" id="new_task" type="text" class="form-control" placeholder="New Task..." required>
+			<input name="new_task" id="new_task" type="text" class="new-task-form" 
+			placeholder="What needs to be done?" size="5", required>
 
 		</form>
 
@@ -34,17 +35,17 @@
     <li class="list-group-item">
 	<div class="left-side">
 	<div class="task-left"><a href="{{ url_for('task_completed', id=task.id) }}"><span class="material-icons">{{ 'check' if task.completed else 'radio_button_unchecked' }}</span></a></div>
-	<div class="task-middle"><p><span class="task-title">{{ task.title }}</span></p><p><span class="task-created">Created on: {{task.time_created}}</span></p></div>
-	<div class="task-right">
+	<div class="task-middle"><p class="task-title">{{ task.title }}</p><p><span class="task-created">Created on: {{task.time_created}}</span></p></div>
 	
+	<div class="task-right">
 		{% if task.deleted == False %}
 		<a href="{{ url_for('task_important', id=task.id) }}"> <span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span></a>
 		{% else %}
 		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> <span class="material-icons"> restore_from_trash</span></a>
 		{% endif %}
 		<a href="{{ url_for('task_delete', id=task.id) }}"> <span class="material-icons"> delete</span></a>
-		
 	</div>
+	
 	</li>
 	
 	{% endfor %}

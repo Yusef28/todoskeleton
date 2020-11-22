@@ -62,7 +62,7 @@
 	<li>
 	<form action="{{ url_for('list_create') }}" method="POST">
 
-			<input name="new_list" id="new_list" type="text" class="form-control" placeholder="New List..." required>
+			<input name="new_list" id="new_list" type="text" class="new-list-form-input" placeholder="New List..." required>
 
 		</form>
 	</ul>
@@ -74,7 +74,7 @@
 	<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> <span class="glyphicon glyphicon-user"></span> {{ g.user.name}} <span class="caret"></span></a>
 	 <ul class="dropdown-menu">
 	  <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-	  <li><a href="{{ url_for('user_delete') }}"><span class="glyphicon glyphicon-road"></span> Account Delete</a></li>
+	  <li><a href="{{ url_for('user_delete') }}" onclick="return confirm('Are you sure you want to permanently delete your God DAMN ACCOUNT WTFFFfff?')"><span class="glyphicon glyphicon-road"></span> Account Delete</a></li>
 		</ul>
 		</ul>
 	  

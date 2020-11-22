@@ -17,6 +17,7 @@ from sqlalchemy import (
 	)
 from tabulate import tabulate
 
+
 #Modules
 from flask_app import db, app
 from models import User, List, Task

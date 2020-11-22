@@ -1,7 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+*{
+	box-sizing:border-box;
+}
 
 body{
 	background-color:#eeeeee;
+	font-family:roboto;
 }
 
 form{
@@ -18,15 +23,45 @@ form{
 }
 
 .form{
-	
 	width:400px;
 	margin:0 auto;
 }
 
 .new-list-form{
 	padding:6px;
+	text-overflow:ellipsis;
+}
+
+.new-list-form-input{
+	height:30px;
+	font-size:15px;
+	border:none;
+	color:#fff;
+	border-bottom:2px solid #888;
+	background-color:#222;
+	margin-top:4px;
+}
+.new-list-form-input:focus{
+	outline:none;
 	
 }
+
+
+.new-task-form{
+	width:100%;
+	height:35px;
+	font-size:25px;
+	border:none;
+	color:black;
+	border-bottom:2px solid #bbbbbb;
+	background-color:#eeeeee;
+}
+
+.new-task-form:focus{
+	outline:none;
+	
+}
+
 .input-group{
     width:100%;
 }
@@ -41,12 +76,14 @@ form{
 }
 
 .material-icons{
-	border-radius:100%;
-	background-color:#dddddd;
 	padding:4px;
 	color:black;
-	}
-
+}
+	
+.alt-material-icon-style{
+	border-radius:100%;
+	background-color:#dddddd;
+}
 
 .left-side{
 	display:flex;
@@ -56,11 +93,16 @@ form{
 }
 
 .task-title{
-	font-size:15px;
+	font-size:20px;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow:hidden;
+	display:inline-block;
 }
 
 .task-created{
 	font-size:12px;
+	display:none;
 }
 
 .task-left{
@@ -70,11 +112,18 @@ form{
 
 .task-middle{
 	margin:0px;
+	white-space:nowrap;
+	overflow:hidden;
+	display:inline-block;
+	
+	text-overflow:ellipsis;
 }
 
 .task-right{
 	margin:0px;
 	margin-left:auto;
+	width:60px;
+	white-space:nowrap;
 }
 
 h2.list-title{
@@ -85,11 +134,11 @@ h2.list-title{
 	.container{
 		width:760px;
 	}
-
 }
 
 @media only screen and (max-width:450px){
 	.form{
 		width:100%;
+		padding:10px;
 	}
 }

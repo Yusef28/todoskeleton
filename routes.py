@@ -33,8 +33,8 @@ def index():
 	return render_template('auth/index.html')
 
 
-@app.route("/dashboard_lists")
-def dashboard_lists():
+@app.route("/dashboard_all_info")
+def dashboard_all_info():
 	pass
 
 
@@ -78,14 +78,11 @@ def dashboard_deleted():
 @app.route("/dashboard")
 def dashboard():
 
-
-		
 	#get all lists and tasks for that list
 	user = user_read(session['user_id'])
 	lists = db.session.query(List).filter_by(parent_user = user.id)
 	current_list = find_current_list(lists)
 	tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
-
 
 	#return dashboard(user)
 	return render_template('list/dashboard.html', lists = lists, tasks = tasks, current_list = current_list)

@@ -20,13 +20,33 @@ from tabulate import tabulate
 #Modules
 from flask_app import db, app
 from models import User, List, Task
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
 
+from werkzeug.security import check_password_hash, generate_password_hash
+
+'''
+class Registration_form(FlaskForm):
+	username = StringField('username', validators=[DataRequired()])
+	email = StringField('email', validators=[DataRequired(), Email()])
+	password = PasswordField('password', validators=[DataRequired()])
+	password2 = PasswordField('password2', validators=[DataRequired(), EqualTo('password')])
+	submit = SubmitField('register')
+'''
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
 	
+	#form = Registration_form()
+	#{{ form.csrf_token }}
+	#{{ form.username.label }} {{ form.username(class='form-control', size=20) }}
+	#print(form.validate_on_submit())
+	#print(form.errors)
+	
+	
 	if request.method == 'POST':
-		name = request.form['username']
+		name = request.form['username'] #form.username.data 
 		password = request.form['password']
 		confirmation = request.form['password2']
 		email = request.form['email']
@@ -54,8 +74,9 @@ def registration():
 			
 		if error:
 			return render_template('auth/registration.html')
+			#return render_template('auth/registration.html', form=form)
 			
-		result =  user_create(name, email, password)
+		result =  user_create(name, email, generate_password_hash(password))
 		
 		if result:
 			flash(result)
@@ -80,7 +101,7 @@ def login():
 			print(error)
 			flash(error)
 			
-		elif user.password != password:
+		elif not check_password_hash(user.password, password):
 			error = 'User name or password False.'
 			print(error)
 			flash(error)
@@ -141,13 +162,13 @@ def user_read(id):
 	return user
 	
 
+#unused
 @app.route("/user_update")
 def user_update(id, neue):
 
 	benutzer = User.query.get(id)
 	alt = benutzer.name
 	benutzer.name = neue
-	#db.session.add(benutzer)
 	db.session.commit()
 	benutzer = User.query.get(id)
 	return 'Benutzer name von !'+alt+'! nach *'+benutzer.name+'* Verandert!'
