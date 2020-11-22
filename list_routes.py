@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
-from tabulate import tabulate
+
 
 
 #Modules
@@ -27,6 +27,10 @@ from models import User, List, Task
 def list_create():
 
 	if request.method == 'POST':
+		if "Getting Started" == request.form['new_list']:
+			print('A list with this name already exists')
+			return redirect(url_for('dashboard'))
+			
 		list = List(title=request.form['new_list'], parent_user=session['user_id'])
 		db.session.add(list)
 		db.session.commit()
@@ -45,27 +49,34 @@ def liste_lesen(id):
 	return 'Listen gelesen'
 
 	
-@app.route("/liste_update")
-def liste_update(id, neue):
-	list = db.session.query(List).get(id)
-	alt = list.title
-	list.title = neue
-	db.session.commit()
-	print('Liste title von !'+alt+'! nach *'+list.title+'* Verandert!')
+@app.route("/list_update/<int:id>", methods=('GET', 'POST'))
+def list_update(id):
+	
+	if request.method == 'POST':
+		if "Getting Started" == request.form['list-title-change-input']:
+			print('A list with this name already exists')
+			return redirect(url_for('dashboard'))
+			
+		new_title = request.form['list-title-change-input']
+		list = db.session.query(List).get(id)
+		old_title = list.title
+		list.title = new_title
+		db.session.commit()
+		print('List title from !'+old_title+'! to *'+list.title+'* changed!')
 	return redirect(url_for('dashboard'))
 
  
 @app.route("/list_delete/<int:id>")
 def list_delete(id):
 	list = db.session.query(List).get(id)
-	if list.title == "Default":
-		print('You cannot delete the Default list!')
+	if list.title == "Getting Started":
+		print('You cannot delete the Getting Started list!')
 		return redirect(url_for('dashboard'))
 		
 	if list.current == True:
 		#I needed to search using default as title AND session id otherwise I get the first default List which
 		#could be from another user!
-		default = db.session.query(List).filter_by(title = "Default", parent_user = session['user_id']).first()
+		default = db.session.query(List).filter_by(title = "Getting Started", parent_user = session['user_id']).first()
 		print(default.title)
 		list.current = False
 		default.current = True

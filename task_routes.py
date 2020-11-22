@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
-from tabulate import tabulate
+
 
 #Modules
 from flask_app import db, app

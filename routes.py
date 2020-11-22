@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
-from tabulate import tabulate
+
 
 #Modules
 from flask_app import db, app
@@ -44,6 +44,7 @@ def dashboard_current():
 	lists = List.query.filter_by(parent_user = user.id)
 	current_list = find_current_list(lists)
 	current_tasks = Task.query.filter_by(parent_list=current_list.id, current=True, deleted=False)
+	current_tasks = sorted(list(current_tasks), key=lambda x:(-x.important, x.id))
 	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
 	
 	
@@ -83,7 +84,7 @@ def dashboard():
 	lists = db.session.query(List).filter_by(parent_user = user.id)
 	current_list = find_current_list(lists)
 	tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
-
+	tasks = sorted(list(tasks), key=lambda x:(-x.important, x.id))
 	#return dashboard(user)
 	return render_template('list/dashboard.html', lists = lists, tasks = tasks, current_list = current_list)
 	

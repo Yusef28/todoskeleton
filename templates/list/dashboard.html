@@ -8,14 +8,53 @@
 
 	<br>
 	<div>
-	<h2>{{ current_list.title }}
 	
-	{% if current_list.title != "Default" %}
-	<a href="#"> <span class="material-icons">edit</span></a>
-	<a href="{{ url_for('list_delete', id=current_list.id) }}"> <span class="material-icons">delete</span></a>
+	<h2>
+	
+	<form class="current-title-form" id="current-title-form" action="{{ url_for('list_update', id=current_list.id) }}" method="POST">
+		<input name="list-title-change-input" id="list-title-change-input" type="text" class="list-title-change-input" 
+		value="{{ current_list.title }}" size="5", required>
+	</form>
+	<span id="current-title-span" class="current-title-span">{{ current_list.title }}</span>
+	
+	{% if current_list.title != "Getting Started" %}
+	
+	<a href="#" onclick="toggleEditForm()" > <span class="material-icons" id="list-edit-icon">edit</span></a>
+	<a href="{{ url_for('list_delete', id=current_list.id) }}" onclick="return confirm('Are you sure you want to delete this list and all of its contents permanently?')" id="list-delete-a">
+	<span class="material-icons">delete</span></a>
+	
+	
+	
 	{% endif %}
 	</h2>
+	
 	</div>
+	
+	<script>
+        function toggleEditForm(){
+		var v = document.getElementById("list-edit-icon")
+		var w = document.getElementById("list-delete-a")
+		var x = document.getElementById("current-title-span")
+		var y = document.getElementById("current-title-form")
+		var z = document.getElementById("list-title-change-input")
+		
+			if (x.style.display === "none"){
+				v.innerHTML = "edit"
+				x.style.display = "inline"
+				w.style.display = "inline"
+				y.style.display = "none"
+				z.style.display = "none"
+			}
+			else{
+				v.innerHTML = "cancel"
+				w.style.display = "none"
+				x.style.display = "none"
+				y.style.display = "inline"
+				z.style.display = "inline"
+			}
+		}
+    </script>
+	
 	<br>
 	
   <ul class="list-group">
@@ -24,7 +63,7 @@
 		<form action="{{ url_for('task_create') }}" method="POST">
 
 			<input name="new_task" id="new_task" type="text" class="new-task-form" 
-			placeholder="What needs to be done?" size="5", required>
+			placeholder="What needs to be done?" size="5", autofocus="autofocus" required>
 
 		</form>
 

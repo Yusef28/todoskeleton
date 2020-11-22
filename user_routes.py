@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-list_routes.py
+user_routes.py
 
 """
 
@@ -15,17 +15,17 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
-from tabulate import tabulate
-
-#Modules
-from flask_app import db, app
-from models import User, List, Task
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
+
+#Modules
+from flask_app import db, app
+from models import User, List, Task
+from user_create import *
 '''
 class Registration_form(FlaskForm):
 	username = StringField('username', validators=[DataRequired()])
@@ -76,7 +76,8 @@ def registration():
 			return render_template('auth/registration.html')
 			#return render_template('auth/registration.html', form=form)
 			
-		result =  user_create(name, email, generate_password_hash(password))
+			#generate_password_hash(password)
+		result =  user_create(name, email, password)
 		
 		if result:
 			flash(result)
@@ -100,8 +101,9 @@ def login():
 			error = 'User not found.'
 			print(error)
 			flash(error)
-			
-		elif not check_password_hash(user.password, password):
+		
+		#not check_password_hash(user.password, password)
+		elif user.password != password:
 			error = 'User name or password False.'
 			print(error)
 			flash(error)
@@ -136,7 +138,7 @@ def load_logged_in_user():
 		
 
 #User functions
-
+'''
 @app.route("/user_create")
 def user_create(name, email, password):
 
@@ -154,7 +156,7 @@ def user_create(name, email, password):
 	
 	print('User *'+user.name+'* created!')
 	return True
-	
+'''
 
 @app.route("/user_read")
 def user_read(id):

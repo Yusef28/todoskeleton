@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-models.py: Alle Models fur projekt
+models.py: All Models
 """
 
 #Built-ins/Generic
