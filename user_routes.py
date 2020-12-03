@@ -16,8 +16,8 @@ from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
 from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -26,14 +26,15 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_app import db, app
 from models import User, List, Task
 from user_create import *
-'''
+
+
 class Registration_form(FlaskForm):
-	username = StringField('username', validators=[DataRequired()])
-	email = StringField('email', validators=[DataRequired(), Email()])
-	password = PasswordField('password', validators=[DataRequired()])
-	password2 = PasswordField('password2', validators=[DataRequired(), EqualTo('password')])
+	username = StringField('Username', validators=[DataRequired()])
+	email = StringField('Email', validators=[DataRequired(), Email()])
+	password = PasswordField('Password', validators=[DataRequired()])
+	password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 	submit = SubmitField('register')
-'''
+
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
@@ -86,6 +87,51 @@ def registration():
 		
 
 	return render_template('auth/registration.html')
+	
+@app.route("/registration_wtf", methods=('GET', 'POST'))
+def registration_wtf():
+	
+	form = Registration_form()#if "GET", create form to send to template
+	if form.validate_on_submit():
+
+		name = form.username.data 
+		password = form.password.data
+		confirmation = form.password2.data
+		email = form.email.data
+		error = None
+		
+		if User.query.filter_by(name = name).first():
+			error = 'user name already registered.'
+			flash(error)
+			print(error)
+			
+		if User.query.filter_by(email = email).first():
+			error = 'user email already registered.'
+			flash(error)
+			print(error)
+		
+		if len(password) < 8:
+			error = 'password must be at least 8 characters long.'
+			flash(error)
+			print(error)
+		
+		if password != confirmation:
+			error = 'password and confirmation password must match.'
+			flash(error)
+			print(error)
+			
+		if error:
+			return render_template('auth/registration_wtf.html', form=form)
+
+		result =  user_create(name, email, password)
+		
+		if result:
+			flash(result)
+			print(result)
+			return redirect(url_for('login'))
+		
+
+	return render_template('auth/registration_wtf.html', form=form)
 	
 #Login 
 @app.route("/login", methods=('GET', 'POST'))
