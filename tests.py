@@ -25,6 +25,15 @@ from models import User, List, Task
 from user_create import user_create
 import user_routes
 
+
+import HtmlTestRunner
+from unittest_prettify.colorize import (
+    colorize,
+    GREEN,
+    RED,
+)
+
+
 class TestCase(unittest.TestCase):
 	
 	def setUp(self):
@@ -37,18 +46,78 @@ class TestCase(unittest.TestCase):
 		db.session.remove()
 		db.drop_all()
 		
+	#http://wiki.c2.com/?ArrangeActAssert
+	
+	@colorize(color=GREEN)
 	def test_empty_db(self):
-		rv = User.query.get(0)
-		assert rv == None
+		'''Test Comment for test_empty_db'''
+		
+		#Arrange
+		
+		#Act
+		db_query = User.query.get(0)
+		
+		#Assert
+		self.assertIsNone(db_query)
 
-		
+	#Test User creation from empty database
 	def test_user_db(self):
-		rv = db.session.query(User).filter(User.name == "Yusef").first()
-		assert rv == None
-		rv = user_create("Yusef", "yusef28@my.yorku.ca", "asdfasdf")
-		rv = db.session.query(User).filter(User.name == "Yusef").first()
-		assert rv != None
-		assert rv.name == "Yusef"
+	
+		#Arrange
+		db_query_before = db.session.query(User).filter(User.name == \
+		"Yusef").first()
+
+		#Act
+		user_create_confirmed = user_create(\
+		"Yusef", "fakeemail@my.yorku.ca", "asdfasdf")
 		
+		db_query_after = db.session.query(User).filter(User.name == \
+		"Yusef").first()
+		
+		#Assert
+		self.assertIsNone(db_query_before)
+		self.assertTrue(user_create_confirmed)
+		self.assertIsNotNone(db_query_after)
+		self.assertEqual(db_query_after.name, "Yusef")
+		self.assertEqual(db_query_after.email, "fakeemail@my.yorku.ca")
+		self.assertEqual(db_query_after.password, "asdfasdf")
+
+	#Test List Create on User Creation
+	def test_default_lists(self):
+	
+		#Arrange
+		db_query_before = db.session.query(List).filter(List.title == \
+		"Getting Started", List.parent_user == 1).first()
+		
+		user_create_confirm = user_create("Yusef", \
+		"fakeemail@my.yorku.ca", "asdfasdf")
+		
+		#Act
+		db_query_after = db.session.query(List).filter(List.title == \
+		"Getting Started", List.parent_user == 1).first()
+		
+		#Assert
+		self.assertIsNone(db_query_before)
+		self.assertIsNotNone(db_query_after)
+	
+	#Test Task Create on User Creation
+	def test_default_tasks(self):
+	
+		#Arrange
+		db_query_before = db.session.query(Task).filter(Task.title == \
+		"1984 By George Orwell", Task.parent_list == 2).first()
+		
+		user_create_confirm = user_create("Yusef", \
+		"fakeemail@my.yorku.ca", "asdfasdf")
+		
+		#Act
+		db_query_after = db.session.query(Task).filter(Task.title == \
+		"1984 By George Orwell", Task.parent_list == 2).first()
+		
+		#Assert
+		self.assertIsNone(db_query_before)
+		self.assertIsNotNone(db_query_after)
+
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()
+    #unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output='example_dir'))

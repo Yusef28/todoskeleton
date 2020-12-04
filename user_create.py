@@ -74,10 +74,6 @@ def user_create(name, email, password):
 	db.session.add(task)
 	task = Task(title="Try restoring a task from the deleted filter", parent_list=getting_started_list.id)
 	db.session.add(task)
-	task = Task(title="Try completing a task and staring a task", parent_list=getting_started_list.id)
-	db.session.add(task)
-	task = Task(title="Try out the filters", parent_list=getting_started_list.id)
-	db.session.add(task)
 	db.session.commit()
 	
 	#Init Books to read List
