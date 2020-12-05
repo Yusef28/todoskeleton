@@ -34,7 +34,7 @@ from unittest_prettify.colorize import (
 )
 
 
-class TestCase(unittest.TestCase):
+class User_Creation_Test(unittest.TestCase):
 	
 	def setUp(self):
 		flask_app.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/testing22.db'
@@ -78,6 +78,7 @@ class TestCase(unittest.TestCase):
 		self.assertIsNone(db_query_before)
 		self.assertTrue(user_create_confirmed)
 		self.assertIsNotNone(db_query_after)
+		self.assertIsNotNone(db_query_after.time_created)
 		self.assertEqual(db_query_after.name, "Yusef")
 		self.assertEqual(db_query_after.email, "fakeemail@my.yorku.ca")
 		self.assertEqual(db_query_after.password, "asdfasdf")

@@ -1,0 +1,6 @@
+
+
+faster row count
+https://stackoverflow.com/questions/10822635/get-the-number-of-rows-in-table-using-sqlalchemy
+from sqlalchemy import func
+rows = session.query(func.count(Congress.id)).scalar()
