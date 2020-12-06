@@ -1,0 +1,11 @@
+flask
+flask_sqlalchemy
+sqlalchemy
+flask_wtf
+wtforms
+werkzeug
+datetime
+flask_testing
+pytest
+html-testRunner
+unittest_prettify

@@ -91,6 +91,8 @@ def registration():
 @app.route("/registration_wtf", methods=('GET', 'POST'))
 def registration_wtf():
 	
+	#besser weg https://stackoverflow.com/questions/13585663/flask-wtfform-flash-does-not-display-errors
+	
 	form = Registration_form()#if "GET", create form to send to template
 	if form.validate_on_submit():
 
