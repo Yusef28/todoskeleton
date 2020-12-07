@@ -14,7 +14,8 @@
 	<form class="current-title-form" id="current-title-form" 
 	action="{{ url_for('list_update', id=current_list.id) }}" 
 	method="POST">
-	
+		{{ form.csrf_token }}
+		
 		<input name="list-title-change-input" 
 		id="list-title-change-input" 
 		type="text" 
@@ -22,6 +23,9 @@
 		value="{{ current_list.title }}" 
 		size="5", 
 		required>
+		
+		{{ list_update_form.title.label }} 
+		{{ list_update_form.title(class_="list-title-change-input", size=20) }}
 		
 	</form>
 	

@@ -35,6 +35,10 @@ class Registration_form(FlaskForm):
 	password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
 	submit = SubmitField('register')
 
+class Login_form(FlaskForm):
+	username = StringField('Username', validators=[DataRequired()])
+	password = PasswordField('Password', validators=[DataRequired()])
+	submit = SubmitField('login')
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
@@ -130,7 +134,7 @@ def registration_wtf():
 		if result:
 			flash(result)
 			print(result)
-			return redirect(url_for('login'))
+			return redirect(url_for('login_wtf'))
 		
 
 	return render_template('auth/registration_wtf.html', form=form)
@@ -164,6 +168,38 @@ def login():
 		
 	return render_template('auth/login.html')
 
+#Login_wtf 
+@app.route("/login_wtf", methods=('GET', 'POST'))
+def login_wtf():
+
+	form = Login_form()#if "GET", create form to send to template
+	if form.validate_on_submit():
+
+		name = form.username.data 
+		password = form.password.data
+		error = None
+		
+		user = User.query.filter_by(name = name).first()#first or else you get an iterator
+		
+		if not user:
+			error = 'User not found.'
+			print(error)
+			flash(error)
+		
+		#not check_password_hash(user.password, password)
+		elif user.password != password:
+			error = 'User name or password False.'
+			print(error)
+			flash(error)
+			
+		if not error:
+			session.clear()
+			session['user_id'] = user.id
+			#with just dashboard() I get an onscreen error Badrequest
+			return redirect(url_for('dashboard'))
+		
+	return render_template('auth/login_wtf.html', form=form)
+	
 @app.route("/logout")
 def logout():
 	session.clear()
@@ -226,6 +262,7 @@ def user_update(id, neue):
 
 @app.route("/user_delete")
 def user_delete():
+	print(session['user_id'])
 	user = User.query.get(session['user_id'])
 	db.session.delete(user)
 	db.session.commit()

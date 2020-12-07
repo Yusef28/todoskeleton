@@ -23,6 +23,19 @@ from flask_app import db, app
 from models import User, List, Task
 
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo
+
+class Update_List_form(FlaskForm):
+	username = StringField('Username', validators=[DataRequired()])
+	email = StringField('Email', validators=[DataRequired(), Email()])
+	password = PasswordField('Password', validators=[DataRequired()])
+	password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+	submit = SubmitField('register')
+	
+	
+
 @app.route("/list_create", methods=('GET', 'POST'))
 def list_create():
 
@@ -65,6 +78,23 @@ def list_update(id):
 		print('List title from !'+old_title+'! to *'+list.title+'* changed!')
 	return redirect(url_for('dashboard'))
 
+@app.route("/list_update_wtf/<int:id>", methods=('GET', 'POST'))
+def list_update_wtf(id):
+	
+	form = Update_List_form()
+	if form.validate_on_submit():
+		
+		if "Getting Started" == form.title.data:
+			print('A list with this name already exists')
+			return redirect(url_for('dashboard'), list_update_form=form)
+			
+		new_title = form.title.data
+		list = db.session.query(List).get(id)
+		old_title = list.title
+		list.title = new_title
+		db.session.commit()
+		print('List title from !'+old_title+'! to *'+list.title+'* changed!')
+	return redirect(url_for('dashboard_wtf'), list_update_form=form)
  
 @app.route("/list_delete/<int:id>")
 def list_delete(id):

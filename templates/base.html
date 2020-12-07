@@ -57,16 +57,16 @@
 		  <li><a href="{{ url_for('change_current_list', old_list_id=current_list.id, new_list_id=list.id) }}">{{ list.title }}</a></li>
 		{% endfor %}
 		</ul>
-		
 	</ul>
+	
 	<ul class="nav navbar-nav new-list-form">
-	<li>
 	<form action="{{ url_for('list_create') }}" method="POST">
 
 			<input name="new_list" id="new_list" type="text" class="new-list-form-input" placeholder="New List..." required>
 
 		</form>
 	</ul>
+	
 	{% endif %}
     
 	<ul class="nav navbar-nav navbar-right">
@@ -81,7 +81,7 @@
 	  
 	  {% else %}
       <li><a href="{{ url_for('registration_wtf') }}"><span class="glyphicon glyphicon-user"></span> Registration</a></li>
-      <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      <li><a href="{{ url_for('login_wtf') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 	  {% endif %}
 	</ul>
   </div>
