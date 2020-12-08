@@ -50,6 +50,11 @@ class Module_Test(unittest.TestCase):
 	#http://wiki.c2.com/?ArrangeActAssert
 	
 	
+	# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+	# # # # # funtions where I have to get/post # # # # # # # #
+	#because the function in te project requires the session object
+	#and that comes from the test_client which is self.app
+	
 	#https://stackoverflow.com/questions/21577481/flask-wtf-wtforms-with-unittest-fails-validation-but-works-without-unittest
 	def login(self, username, password):
 	
@@ -81,6 +86,11 @@ class Module_Test(unittest.TestCase):
 		#test client sends a get request to /logout
 		return self.app.get('/user_delete', follow_redirects=True)
 		
+	# # # # # # end of get/post functions # # # # # # # # # # # 
+	# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+	
+	
+	
 	def test_user_register(self):
 		'''Test Comment for test_empty_db'''
 		

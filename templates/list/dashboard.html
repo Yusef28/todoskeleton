@@ -15,7 +15,7 @@
 	action="{{ url_for('list_update', id=current_list.id) }}" 
 	method="POST">
 	
-		<input name="list-title-change-input" 
+		<input name="list_title_change_input" 
 		id="list-title-change-input" 
 		type="text" 
 		class="list-title-change-input" 
@@ -24,6 +24,16 @@
 		required>
 		
 	</form>
+	
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+			<div class="notification is-danger">
+				{{ message }}
+			</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
 	
 	<span id="current-title-span" class="current-title-span">{{ current_list.title }}</span>
 	
