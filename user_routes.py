@@ -1,6 +1,6 @@
 #!interpreter [optional-arg]
 # -*- coding: utf-8 -*-
-
+#
 """
 user_routes.py
 
@@ -40,57 +40,7 @@ class Login_form(FlaskForm):
 	password = PasswordField('Password', validators=[DataRequired()])
 	submit = SubmitField('login')
 
-@app.route("/registration", methods=('GET', 'POST'))
-def registration():
-	
-	#form = Registration_form()
-	#{{ form.csrf_token }}
-	#{{ form.username.label }} {{ form.username(class='form-control', size=20) }}
-	#print(form.validate_on_submit())
-	#print(form.errors)
-	
-	
-	if request.method == 'POST':
-		name = request.form['username'] #form.username.data 
-		password = request.form['password']
-		confirmation = request.form['password2']
-		email = request.form['email']
-		error = None
-		
-		if User.query.filter_by(name = name).first():
-			error = 'user name already registered.'
-			flash(error)
-			print(error)
-			
-		if User.query.filter_by(email = email).first():
-			error = 'user email already registered.'
-			flash(error)
-			print(error)
-		
-		if len(password) < 8:
-			error = 'password must be at least 8 characters long.'
-			flash(error)
-			print(error)
-		
-		if password != confirmation:
-			error = 'password and confirmation password must match.'
-			flash(error)
-			print(error)
-			
-		if error:
-			return render_template('auth/registration.html')
-			#return render_template('auth/registration.html', form=form)
-			
-			#generate_password_hash(password)
-		result =  user_create(name, email, password)
-		
-		if result:
-			flash(result)
-			print(result)
-			return redirect(url_for('login'))
-		
 
-	return render_template('auth/registration.html')
 	
 @app.route("/registration_wtf", methods=('GET', 'POST'))
 def registration_wtf():
@@ -139,34 +89,6 @@ def registration_wtf():
 
 	return render_template('auth/registration_wtf.html', form=form)
 	
-#Login 
-@app.route("/login", methods=('GET', 'POST'))
-def login():
-
-	if request.method == 'POST':
-		name = request.form['username']
-		password = request.form['password']		
-		error = None
-		user = User.query.filter_by(name = name).first()#first or else you get an iterator
-		
-		if not user:
-			error = 'User not found.'
-			print(error)
-			flash(error)
-		
-		#not check_password_hash(user.password, password)
-		elif user.password != password:
-			error = 'User name or password False.'
-			print(error)
-			flash(error)
-			
-		if not error:
-			session.clear()
-			session['user_id'] = user.id
-			#with just dashboard() I get an onscreen error Badrequest
-			return redirect(url_for('dashboard'))
-		
-	return render_template('auth/login.html')
 
 #Login_wtf 
 @app.route("/login_wtf", methods=('GET', 'POST'))

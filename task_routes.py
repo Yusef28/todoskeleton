@@ -1,6 +1,6 @@
 #!interpreter [optional-arg]
 # -*- coding: utf-8 -*-
-
+#
 """
 task_routes.py
 
@@ -38,14 +38,14 @@ def task_create():
 		flash('Task *'+new_task.title+'* for List *'+current_list.title+'* created!')
 	return redirect(url_for('dashboard'))
 	
-@app.route("/task_update")
-def task_update(id, neue):
-	task = db.session.query(Task).get(id)
-	old = task.title
-	task.title = neue
-	db.session.commit()
-	print('task title von !'+old+'! nach *'+task.title+'* updated!')
-	return redirect(url_for('dashboard'))
+#@app.route("/task_update")
+#def task_update(id, neue):
+#	task = db.session.query(Task).get(id)
+#	old = task.title
+#	task.title = neue
+#	db.session.commit()
+#	print('task title von !'+old+'! nach *'+task.title+'* updated!')
+#	return redirect(url_for('dashboard'))
 
 @app.route("/task_important/<int:id>")
 def task_important(id):

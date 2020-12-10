@@ -1,6 +1,6 @@
 #!interpreter [optional-arg]
 # -*- coding: utf-8 -*-
-
+#
 """
 routes.py: Alle Routes 
 
@@ -30,14 +30,16 @@ from user_routes import *
 
 @app.route("/")
 def index():
-	return render_template('auth/index.html')
 
+	if 'user_id' not in session:#on start and after clear
+		return render_template('auth/index.html')
+	else:
+		user = user_read(session['user_id'])
+		lists = db.session.query(List).filter_by(parent_user = user.id)
+		current_list = find_current_list(lists)
+		return render_template('auth/index.html', lists=lists, current_list=current_list)
 
-@app.route("/dashboard_all_info")
-def dashboard_all_info():
-	pass
-
-
+		
 @app.route("/dashboard_current")
 def dashboard_current():
 	user = user_read(session['user_id'])

@@ -1,0 +1,7 @@
+pip install coverage
+nav to folder with tests
+coverage run -m unittest discover   #<- gather the data
+#then
+coverage report
+#or coverage html
+#or both
