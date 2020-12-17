@@ -32,7 +32,7 @@ class Registration_form(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
 	email = StringField('Email', validators=[DataRequired(), Email()])
 	password = PasswordField('Password', validators=[DataRequired()])
-	password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+	password2 = PasswordField('Confirm Password', validators=[DataRequired()])#<h1>Registration</h1>
 	submit = SubmitField('register')
 
 class Login_form(FlaskForm):
@@ -79,7 +79,7 @@ def registration_wtf():
 		if error:
 			return render_template('auth/registration_wtf.html', form=form)
 
-		result =  user_create(name, email, password)
+		result = user_create(name, email, generate_password_hash(password))
 		
 		if result:
 			flash(result)
@@ -109,7 +109,7 @@ def login_wtf():
 			flash(error)
 		
 		#not check_password_hash(user.password, password)
-		elif user.password != password:
+		elif not check_password_hash(user.password, password):
 			error = 'User name or password False.'
 			print(error)
 			flash(error)
