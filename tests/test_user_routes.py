@@ -5,6 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 	Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
+	
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 from flask_testing import TestCase
 import unittest
@@ -115,7 +118,7 @@ class Module_Test(unittest.TestCase):
 		result_before = self.login("Yusef","asdfasdf")
 		
 		#Act
-		user_create("Yusef", "fakeemail@my.yorku.ca", "asdfasdf")
+		self.register("Yusef", "fakeemail@my.yorku.ca", "asdfasdf", "asdfasdf")
 		result_after = self.login("Yusef","asdfasdf")
 		
 		#Assert
@@ -129,7 +132,7 @@ class Module_Test(unittest.TestCase):
 	def test_user_logout(self):
 		'''Test Comment for test_empty_db'''
 		#Arrange
-		user_create("Yusef", "fakeemail@my.yorku.ca", "asdfasdf")
+		self.register("Yusef", "fakeemail@my.yorku.ca", "asdfasdf", "asdfasdf")
 		result_before = self.login("Yusef","asdfasdf")
 		
 		#Act
@@ -171,7 +174,7 @@ class Module_Test(unittest.TestCase):
 		user_query_before = User.query.get(1)
 		
 		#Act
-		user_create("Yusef", "fakeemail@my.yorku.ca", "asdfasdf")
+		self.register("Yusef", "fakeemail@my.yorku.ca", "asdfasdf", "asdfasdf")
 		result_after = self.login("Yusef","asdfasdf")
 		user_query_after = User.query.get(1)
 		

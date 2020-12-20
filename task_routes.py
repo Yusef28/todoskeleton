@@ -28,9 +28,12 @@ def task_create():
 	
 	if request.method == 'POST':
 		lists = List.query.filter_by(parent_user = session['user_id'])
+		num_lists = len(list(lists))
+		print(num_lists)
 		current_list = find_current_list(lists) #needs the list_routes module
 		title = request.form['new_task']
 		new_task = Task(title=title, parent_list=current_list.id)
+		#TODO: change above line to: new_task = Task(title=title, parent_list=current_list.id, sort_value=num_lists+1)
 		db.session.add(new_task)
 		db.session.commit()
 	

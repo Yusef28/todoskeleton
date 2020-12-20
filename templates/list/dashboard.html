@@ -3,14 +3,11 @@
 {% block content %}
 
 <div class="container" id="main">
-
-
-
 	
 	<div>
 	
 	<h2>
-	
+	{% if current_list %}
 	<form class="current-title-form" id="current-title-form" 
 	action="{{ url_for('list_update', id=current_list.id) }}" 
 	method="POST">
@@ -24,6 +21,7 @@
 		required>
 		
 	</form>
+	{% endif %}
 	
 	{% with messages = get_flashed_messages() %}
 		{% if messages %}
@@ -35,10 +33,11 @@
 		{% endif %}
 	{% endwith %}
 	
+	
+	{% if current_list %}
+	
 	<span id="current-title-span" class="current-title-span">{{ current_list.title }}</span>
-	
-	{% if current_list.title != "Getting Started" %}
-	
+		
 	<a href="#" onclick="toggleEditForm()" > <span class="material-icons" id="list-edit-icon">edit</span></a>
 	
 	<a href="{{ url_for('list_delete', id=current_list.id) }}" 
@@ -47,9 +46,6 @@
 	
 	<span class="material-icons">delete</span></a>
 	
-	
-	
-	{% endif %}
 	</h2>
 	
 	</div>
@@ -78,6 +74,7 @@
 			}
 		}
     </script>
+	
 	
 	<br>
 	<br>
@@ -135,7 +132,11 @@
 	{% endfor %}
 	
 	<br>
-
+	{% else %}
+	
+	<h2> No List Selected </h2>
+	
+	{% endif %}
 
 </ul>
 	

@@ -248,27 +248,7 @@ class List_Test(unittest.TestCase):
 		self.assertIsNotNone(result_before)
 		self.assertIsNone(result_after)
 		
-	def test_list_delete_invalid(self):
-		'''Test Comment for test_empty_db'''
-		
-		#Arrange
-		self.reg_log()
 
-		#Act
-		result_before = db.session.query(List).filter_by(
-		parent_user = 1, id = 1).first()
-		
-		#here it is get but we need self.app because we use session in list_delete()
-		result = self.app.get("list_delete/1", follow_redirects=True)
-		
-		result_after = db.session.query(List).filter_by(
-		parent_user = 1, id = 1).first()
-		
-		#Assert
-		self.assertTrue(b'You cannot delete the Getting Started list!' in result.data)
-		self.assertIsNotNone(result_before)
-		self.assertIsNotNone(result_after)
-		
 	def test_list_delete_current(self):
 		'''Test Comment for test_empty_db'''
 		

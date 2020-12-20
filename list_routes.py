@@ -38,16 +38,31 @@ class Update_List_form(FlaskForm):
 def list_create():
 
 	if request.method == 'POST':
-		if "Getting Started" == request.form['new_list']:
+		
+		title = request.form['new_list']
+		if check_list_exists(title):
 			flash('A list with this name already exists')
 			return redirect(url_for('dashboard'))
-			
-		list = List(title=request.form['new_list'], parent_user=session['user_id'])
-		db.session.add(list)
-		db.session.commit()
 
-		print('List *'+list.title+'* for user with id: *'+str(session['user_id'])+'* created!')
-		flash('List *'+list.title+'* for user with id: *'+str(session['user_id'])+'* created!')
+		
+		lists = db.session.query(List).filter_by(parent_user=session["user_id"]).all()
+		old_current_list = find_current_list(lists)
+		
+		new_current_list = List(title=request.form['new_list'], parent_user=session['user_id'])
+		
+		#This needs to be here before the change/choose function calls 
+		#because they query for this list and then update current
+		db.session.add(new_current_list)
+		db.session.commit()
+		
+		#when you create a new list, switch to immediately
+		if old_current_list:
+			change_current_list(old_current_list.id , new_current_list.id)
+		else:
+			choose_current_list(new_current_list.id)
+
+		print('List *'+new_current_list.title+'* for user with id: *'+str(session['user_id'])+'* created!')
+		flash('List *'+new_current_list.title+'* for user with id: *'+str(session['user_id'])+'* created!')
 	
 	return redirect(request.referrer)
 	
@@ -55,11 +70,12 @@ def list_create():
 def list_update(id):
 	
 	if request.method == 'POST':
-		if "Getting Started" == request.form['list_title_change_input']:
+		
+		new_title = request.form['list_title_change_input']
+		if check_list_exists(new_title):
 			flash('A list with this name already exists')
 			return redirect(url_for('dashboard'))
-			
-		new_title = request.form['list_title_change_input']
+
 		list = db.session.query(List).get(id)
 		old_title = list.title
 		list.title = new_title
@@ -72,18 +88,10 @@ def list_update(id):
 @app.route("/list_delete/<int:id>")
 def list_delete(id):
 	list = db.session.query(List).get(id)
-	if list.title == "Getting Started":
-		flash('You cannot delete the Getting Started list!')
-		return redirect(url_for('dashboard'))
-		
+	
 	if list.current == True:
-		#I needed to search using default as title AND session id otherwise I get the first default List which
-		#could be from another user!
-		default = db.session.query(List).filter_by(title = "Getting Started", parent_user = session['user_id']).first()
-		print(default.title)
 		list.current = False
-		default.current = True
-		
+
 	db.session.delete(list)
 	db.session.commit()
 	print('List *'+list.title+'* Deleted!')
@@ -96,7 +104,7 @@ def find_current_list(lists):
 	for list in lists:
 		if list.current == True:
 			return list
-			
+	return None
 			
 @app.route("/change_current_list/<int:old_list_id>/<int:new_list_id>/")
 def change_current_list(old_list_id, new_list_id):
@@ -115,4 +123,21 @@ def change_current_list(old_list_id, new_list_id):
 	#user = user_read(session['user_id'])
 	return redirect(url_for('dashboard'))
 	
+@app.route("/choose_current_list/<int:new_list_id>/")
+def choose_current_list(new_list_id):
+
+	new_list = db.session.query(List).get(new_list_id)
 	
+	if not new_list:
+		print("List ID not available")
+	else:
+		new_list.current = True
+		db.session.commit()
+		
+	return redirect(url_for('dashboard'))
+	
+
+@app.route("/check_list_exists/<string:title>/")
+def check_list_exists(title):
+
+	return db.session.query(List).filter_by(title=title, parent_user=session["user_id"]).first()

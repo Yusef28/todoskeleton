@@ -1,0 +1,9 @@
+
+One Module:
+py -m unittest tests.test_user_routes
+
+One Class:
+py -m unittest tests.test_user_routes.Module_Test
+
+One Test:
+py -m unittest tests.test_user_routes.Module_Test.test_user_login
