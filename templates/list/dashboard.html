@@ -36,7 +36,9 @@
 	
 	{% if current_list %}
 	
-	<span id="current-title-span" class="current-title-span">{{ current_list.title }}</span>
+	<span id="current-title-span" class="current-title-span">{{ current_list.title }} ({{current_list.all_count}})</span> {% if filter %}
+	<span> Filter: {{ filter }} </span>
+	{% endif %}
 		
 	<a href="#" onclick="toggleEditForm()" > <span class="material-icons" id="list-edit-icon">edit</span></a>
 	
@@ -47,6 +49,7 @@
 	<span class="material-icons">delete</span></a>
 	
 	</h2>
+	
 	
 	</div>
 	
@@ -97,7 +100,7 @@
 	
 	<div class="task-left">
 	<a href="{{ url_for('task_completed', id=task.id) }}">
-	<span class="material-icons">{{ 'check' if task.completed else 'radio_button_unchecked' }}</span>
+	<span class="material-icons">{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}</span>
 	</a>
 	</div>
 	
@@ -108,7 +111,7 @@
 	
 	<div class="task-right">
 	
-		{% if task.deleted == False %}
+		{% if task.state == "current" or task.state == "completed" %}
 		
 		<a href="{{ url_for('task_important', id=task.id) }}"> 
 		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
@@ -124,11 +127,8 @@
 		<a href="{{ url_for('task_delete', id=task.id) }}"> 
 		<span class="material-icons"> delete</span>
 		</a>
-		
 	</div>
-	
 	</li>
-	
 	{% endfor %}
 	
 	<br>

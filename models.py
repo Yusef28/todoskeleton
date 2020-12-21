@@ -117,18 +117,19 @@ class Task(db.Model):
 	important = db.Column(Boolean, unique=False, default=False)
 	deleted = db.Column(Boolean, unique=False, default=False)
 	completed = db.Column(Boolean, unique=False, default=False)
-	
+	#Neue
+	state = db.Column(db.String(200), unique=False, nullable=True, default="current")#current, completed, current-deleted, completed-deleted
 	
 	# ################################### new task Columns #######################################
-	
-	#sort_value = Column(Integer, nullable=False)#a value must be assigned at creation!!!
+	#Neue
+	sort_value = db.Column(db.Integer, nullable=False)#a value must be assigned at creation!!!
 	
 	#date/time columns
 	start_date = db.Column(DateTime(timezone=True), nullable=True, default=None)#must check if none
 	end_date = db.Column(DateTime(timezone=True), nullable=True, default=None)#must check if none
 	reminder_date = db.Column(DateTime(timezone=True), nullable=True, default=None)
-	duration_minutes = Column(Integer, nullable=True, default=None)#must check if none
-	reoccurance_days = Column(Integer, nullable=True, default=None)#must check if none
+	duration_minutes = db.Column(db.Integer, nullable=True, default=None)#must check if none
+	reoccurance_days = db.Column(db.Integer, nullable=True, default=None)#must check if none
 	
 	#color columns
 	fg_color = db.Column(db.String(200), unique=False, nullable=True, default=None)#must check if none
@@ -136,8 +137,8 @@ class Task(db.Model):
 	
 	#rating/type columns
 	type = db.Column(db.String(200), unique=False, nullable=True, default="basic")#Rainy, Frog, Hero, #basic
-	importance_rating = Column(Integer, nullable=False, default=0)
-	energy_rating = Column(Integer, nullable=False, default=1)
+	importance_rating = db.Column(db.Integer, nullable=False, default=0)
+	energy_rating = db.Column(db.Integer, nullable=False, default=1)
 	
 	#Advanced Tasks
 	info = db.Column(db.String(8000), unique=False, nullable=True, default=None)#must check if none

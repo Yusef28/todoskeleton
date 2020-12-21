@@ -143,27 +143,6 @@ def load_logged_in_user():
 		
 		
 
-#User functions
-'''
-@app.route("/user_create")
-def user_create(name, email, password):
-
-	user = User(name=name, email=email, password=password)
-	db.session.add(user)
-	db.session.commit()
-	
-	default = List(title="Default", current = True, parent_user=user.id)
-	db.session.add(default)
-	db.session.commit()
-	
-	task = Task(title="First Task", parent_list=default.id)
-	db.session.add(task)
-	db.session.commit()
-	
-	print('User *'+user.name+'* created!')
-	return True
-'''
-
 @app.route("/user_read")
 def user_read(id):
 	user = User.query.get(id)
@@ -172,11 +151,11 @@ def user_read(id):
 
 #unused
 @app.route("/user_update")
-def user_update(id, neue):
+def user_update(id, new):
 
 	benutzer = User.query.get(id)
 	alt = benutzer.name
-	benutzer.name = neue
+	benutzer.name = new
 	db.session.commit()
 	benutzer = User.query.get(id)
 	return 'Benutzer name von !'+alt+'! nach *'+benutzer.name+'* Verandert!'

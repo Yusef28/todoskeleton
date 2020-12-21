@@ -162,8 +162,11 @@ class List_Test(unittest.TestCase):
 		#Assert
 		self.assertTrue(result_before == 0)
 		self.assertTrue(result_after == 0)
-	
-	def test_task_completed(self):
+			
+		
+	#State Routes
+
+	def test_task_state_completed(self):
 		'''Test Comment for test_empty_db'''
 		
 		#Arrange
@@ -171,21 +174,19 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		result_before = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first().completed 
+		parent_list = 1, id = 1).first().state
+		
 		#change
 		self.app.get("task_completed/1", follow_redirects=True)
-		#task_completed(1)
-		#is it in now?
 		result_after = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first().completed 
+		parent_list = 1, id = 1).first().state
 		
 		#Assert
-		#self.assertTrue(result_before.completed == 0) errors with:
-		#Error: "Instance <Task at 0x48b7630> is not bound to a Session; attribute refresh operation cannot proceed"
-		self.assertTrue(result_before == 0)
-		self.assertTrue(result_after == 1)
 
-	def test_task_delete(self):
+		self.assertTrue(result_before == "current")
+		self.assertTrue(result_after == "completed")
+		
+	def test_task_state_completed_undo(self):
 		'''Test Comment for test_empty_db'''
 		
 		#Arrange
@@ -193,23 +194,40 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		result_before = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first().deleted
+		parent_list = 1, id = 1).first().state
+		
+		#change and change back
+		self.app.get("task_completed/1", follow_redirects=True)
+		self.app.get("task_completed/1", follow_redirects=True)
+		
+		result_after = db.session.query(Task).filter_by(
+		parent_list = 1, id = 1).first().state
+		#Assert
 
-		#change
+		self.assertTrue(result_before == "current")
+		self.assertTrue(result_after == "current")
+		
+	def test_task_state_completed_delete(self):
+		'''Test Comment for test_empty_db'''
+		
+		#Arrange
+		self.reg_log()
+	
+		#Act
+		result_before = db.session.query(Task).filter_by(
+		parent_list = 1, id = 1).first().state
+		
+		self.app.get("task_completed/1", follow_redirects=True)
 		result = self.app.get("task_delete/1", follow_redirects=True)
-		#is it in now?
+		
 		result_after = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first().deleted
+		parent_list = 1, id = 1).first().state
 		
-		#Assert
-		
-		#self.assertEqual(result_before.deleted, False) fails with "Failure: True != False"
-		self.assertEqual(result_before, False)
-		#self.assertEqual(result_before.current, 1)
-		self.assertEqual(result_after, True)
-		#self.assertEqual(result_after.current, 0)
-		
-	def test_task_delete_undo(self):
+		#Assert		
+		self.assertEqual(result_before, "current")
+		self.assertEqual(result_after, "completed-deleted")		
+
+	def test_task_state_completed_delete_undo(self):
 		'''Test Comment for test_empty_db'''
 		
 		#Arrange
@@ -217,20 +235,21 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		result_before = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first()
-		#double delete
-		self.app.get("task_delete/1", follow_redirects=True)
-		self.app.get("task_delete/1", follow_redirects=True)
-		#is it in now?
+		parent_list = 1, id = 1).first().state
+		
+		self.app.get("task_completed/1", follow_redirects=True)
+		result = self.app.get("task_delete/1", follow_redirects=True)
+		result = self.app.get("task_delete_undo/1", follow_redirects=True)
+		
 		result_after = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first()
+		parent_list = 1, id = 1).first().state
 		
-		#Assert
-		self.assertIsNotNone(result_before)
-		self.assertIsNone(result_after)
-		print('ttdu gut')
+		#Assert		
+		self.assertEqual(result_before, "current")
+		self.assertEqual(result_after, "completed")
 		
-	def test_task_delete_full(self):
+		
+	def test_task_state_current_delete(self):
 		'''Test Comment for test_empty_db'''
 		
 		#Arrange
@@ -238,15 +257,34 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		result_before = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first()
-		#double delete
-		self.app.get("task_delete/1", follow_redirects=True)
-		self.app.get("task_delete_undo/1", follow_redirects=True)
-		#is it in now?
-		result_after = db.session.query(Task).filter_by(
-		parent_list = 1, id = 1).first()
+		parent_list = 1, id = 1).first().state
 		
-		#Assert
-		self.assertIsNotNone(result_before)
-		self.assertIsNotNone(result_after)
-		print('ttdf gut')
+		result = self.app.get("task_delete/1", follow_redirects=True)
+		
+		result_after = db.session.query(Task).filter_by(
+		parent_list = 1, id = 1).first().state
+		
+		#Assert		
+		self.assertEqual(result_before, "current")
+		self.assertEqual(result_after, "current-deleted")
+
+	def test_task_state_current_delete_undo(self):
+		'''Test Comment for test_empty_db'''
+		
+		#Arrange
+		self.reg_log()
+	
+		#Act
+		result_before = db.session.query(Task).filter_by(
+		parent_list = 1, id = 1).first().state
+		
+		result = self.app.get("task_delete/1", follow_redirects=True)
+		result = self.app.get("task_delete_undo/1", follow_redirects=True)
+		
+		result_after = db.session.query(Task).filter_by(
+		parent_list = 1, id = 1).first().state
+		
+		#Assert		
+		self.assertEqual(result_before, "current")
+		self.assertEqual(result_after, "current")
+

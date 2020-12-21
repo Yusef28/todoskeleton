@@ -28,12 +28,15 @@ def task_create():
 	
 	if request.method == 'POST':
 		lists = List.query.filter_by(parent_user = session['user_id'])
-		num_lists = len(list(lists))
-		print(num_lists)
+		#num_lists = len(list(lists))
 		current_list = find_current_list(lists) #needs the list_routes module
+		
 		title = request.form['new_task']
-		new_task = Task(title=title, parent_list=current_list.id)
-		#TODO: change above line to: new_task = Task(title=title, parent_list=current_list.id, sort_value=num_lists+1)
+		#new_task = Task(title=title, parent_list=current_list.id)
+		
+		new_task = Task(title=title, parent_list=current_list.id, sort_value=current_list.all_count+1)
+		current_list.all_count += 1
+		
 		db.session.add(new_task)
 		db.session.commit()
 	
@@ -41,14 +44,6 @@ def task_create():
 		flash('Task *'+new_task.title+'* for List *'+current_list.title+'* created!')
 	return redirect(url_for('dashboard'))
 	
-#@app.route("/task_update")
-#def task_update(id, neue):
-#	task = db.session.query(Task).get(id)
-#	old = task.title
-#	task.title = neue
-#	db.session.commit()
-#	print('task title von !'+old+'! nach *'+task.title+'* updated!')
-#	return redirect(url_for('dashboard'))
 
 @app.route("/task_important/<int:id>")
 def task_important(id):
@@ -61,33 +56,59 @@ def task_important(id):
 @app.route("/task_completed/<int:id>")
 def task_completed(id):
 	task = db.session.query(Task).get(id)
-
-	#we only really need either current or completed
-	task.current, task.completed = task.completed, task.current 
+	
+	#Neue
+	if task.state == "current":
+		task.state = "completed"
+	elif task.state == "current-deleted":
+		task.state = "completed-deleted"
+	elif task.state == "completed-deleted":
+		task.state = "current-deleted"
+	else:
+		task.state = "current"
+		
 	db.session.commit()
 	return  redirect(request.referrer)
 	
 @app.route("/task_delete/<int:id>")
 def task_delete(id):
 	task = db.session.query(Task).get(id)
-	if task.deleted == False:
-		task.deleted = True
-		db.session.commit()
-		print('Task *'+task.title+'* moved to trash!')
-		print('Set task *'+task.title+'* delete to *'+str(task.deleted))
-	elif task.deleted == True:
+	
+	#Neue
+	if task.state == "current":
+		task.state = "current-deleted"
+		print('Task *'+task.title+'* moved to trash as '+str(task.state))
+		
+	elif task.state == "completed":
+		task.state = "completed-deleted"
+		print('Task *'+task.title+'* moved to trash as '+str(task.state))
+		
+	elif task.state == "deleted":
+		current_list = db.session.query(List).get(task.parent_list)
+		current_list.all_count -= 1
 		db.session.delete(task)
-		db.session.commit()
 		print('Task *'+task.title+'* deleted permenantly!')
-	return  redirect(request.referrer)
+		
+	db.session.commit()
+	return redirect(request.referrer)
 
 @app.route("/task_delete_undo/<int:id>")
 def task_delete_undo(id):
+
+	
+		
 	task = db.session.query(Task).get(id)
-	task.deleted = False
+	
+	#Neue
+	if task.state == "current-deleted":
+		task.state = "current"
+	elif task.state == "completed-deleted":
+		task.state = "completed"
+	
+	#task.deleted = False
 	db.session.commit()
 	print('Task *'+task.title+'* restored!')
-	print('Set task *'+task.title+'* delete to *'+str(task.deleted))
+	print('Set task *'+task.title+'* delete to *'+str(task.state))
 	
 	return  redirect(request.referrer)
 

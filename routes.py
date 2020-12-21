@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 """
-routes.py: Alle Routes 
+routes.py: All Routes 
 
 """
 
@@ -15,13 +15,13 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
-
+from sqlalchemy import or_
 
 #Modules
 from flask_app import db, app
 from models import User, List, Task
 import task_routes, list_routes, user_routes
-#for somereason I need to also import all from each of these. 
+#for some reason I need to also import all from each of these. 
 #especially list_routes for find all from list
 from list_routes import *
 from task_routes import *
@@ -47,41 +47,46 @@ def index():
 		return render_template('auth/index.html', lists=lists, current_list=current_list)
 		
 		
-@app.route("/dashboard_current")
-def dashboard_current():
+@app.route("/filter_current")
+def filter_current():
 	lists, current_list = get_lists_and_current_list()
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
-	current_tasks = Task.query.filter_by(parent_list=current_list.id, current=True, deleted=False)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, state="current")
 	current_tasks = sorted(list(current_tasks), key=lambda x:(-x.important, x.id))
-	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="current")
 	
 	
-@app.route("/dashboard_important")
-def dashboard_important():
+@app.route("/filter_important")
+def filter_important():
 	lists, current_list = get_lists_and_current_list()
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
-	current_tasks = Task.query.filter_by(parent_list=current_list.id, important=True, deleted=False)
-	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, 
+	important=True).filter(or_(Task.state=="current", Task.state=="completed"))
+	
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="Important")
 	
 
-@app.route("/dashboard_completed")
-def dashboard_completed():
+@app.route("/filter_completed")
+def filter_completed():
 	lists, current_list = get_lists_and_current_list()
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
-	current_tasks = Task.query.filter_by(parent_list=current_list.id, completed=True, deleted=False)
-	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	current_tasks = Task.query.filter_by(parent_list=current_list.id, state="completed")
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="Completed")
 	
 	
-@app.route("/dashboard_deleted")
-def dashboard_deleted():
+@app.route("/filter_deleted")
+def filter_deleted():
 	lists, current_list = get_lists_and_current_list()
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
-	current_tasks = Task.query.filter_by(parent_list=current_list.id, deleted=True)
-	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list)
+	current_tasks = Task.query.filter_by(
+	parent_list=current_list.id, ).filter(or_(Task.state=="current-deleted", Task.state=="completed-deleted"))
+	#http://www.leeladharan.com/sqlalchemy-query-with-or-and-like-common-filters
+	
+	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="Deleted")
 	
 	
 @app.route("/dashboard_show_lists")
@@ -106,7 +111,7 @@ def dashboard():
 	if not current_list:
 		return render_template('list/dashboard_lists.html', lists=lists)
 		
-	tasks = Task.query.filter_by(parent_list=current_list.id, deleted=False)
+	tasks = Task.query.filter_by(parent_list=current_list.id).filter(or_(Task.state=="current", Task.state=="completed"))
 	tasks = sorted(list(tasks), key=lambda x:(-x.important, x.id))
-	return render_template('list/dashboard.html', lists = lists, tasks = tasks, current_list = current_list)
+	return render_template('list/dashboard.html', lists = lists, tasks = tasks, current_list = current_list, filter="All")
 	

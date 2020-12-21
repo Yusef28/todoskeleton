@@ -16,9 +16,8 @@ from sqlalchemy import (
 	Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
 
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test25.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test30.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'StArFox64'
 db = SQLAlchemy(app)

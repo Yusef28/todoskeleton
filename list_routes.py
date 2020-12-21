@@ -1,6 +1,5 @@
-#!interpreter [optional-arg]
 # -*- coding: utf-8 -*-
-#
+
 """
 list_routes.py
 
@@ -16,24 +15,11 @@ from sqlalchemy import (
 		Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 	)
 
-
-
 #Modules
 from flask_app import db, app
 from models import User, List, Task
 
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo
-
-class Update_List_form(FlaskForm):
-	username = StringField('Username', validators=[DataRequired()])
-	email = StringField('Email', validators=[DataRequired(), Email()])
-	password = PasswordField('Password', validators=[DataRequired()])
-	password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-	submit = SubmitField('register')
-	
 @app.route("/list_create", methods=('GET', 'POST'))
 def list_create():
 
@@ -88,10 +74,6 @@ def list_update(id):
 @app.route("/list_delete/<int:id>")
 def list_delete(id):
 	list = db.session.query(List).get(id)
-	
-	if list.current == True:
-		list.current = False
-
 	db.session.delete(list)
 	db.session.commit()
 	print('List *'+list.title+'* Deleted!')

@@ -35,7 +35,7 @@ from unittest_prettify.colorize import (
     RED,
 )
 
-class List_Test(unittest.TestCase):
+class Dashboard_Test(unittest.TestCase):
 	
 	def setUp(self):
 		flask_app.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/testing28.db'
@@ -116,6 +116,39 @@ class List_Test(unittest.TestCase):
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
 
+	def test_dashboard_filter_all_current(self):
+	
+		#Arrange
+		self.reg_log()
+	
+		#Act
+		result = self.app.get("/dashboard", follow_redirects=True)
+		
+		#Assert
+		self.assertTrue(b"Getting Started (6)</span> \n\t<span> Filter: All" in result.data)
+
+	def test_dashboard_filter_all_completed(self):
+	
+		#Arrange
+		self.reg_log()
+	
+		#Act
+		result = self.app.get("/dashboard", follow_redirects=True)
+		
+		#Assert
+		self.assertTrue(b"Getting Started (6)</span> \n\t<span> Filter: All" in result.data)
+
+	def test_dashboard_filter_all_deleted(self):
+	
+		#Arrange
+		self.reg_log()
+	
+		#Act
+		result = self.app.get("/dashboard", follow_redirects=True)
+		
+		#Assert
+		self.assertTrue(b"Getting Started (6)</span> \n\t<span> Filter: All" in result.data)
+
 		
 	def test_dashboard_important_before(self):
 	
@@ -123,7 +156,7 @@ class List_Test(unittest.TestCase):
 		self.reg_log()
 	
 		#Act
-		result = self.app.get("/dashboard_important", follow_redirects=True)
+		result = self.app.get("/filter_important", follow_redirects=True)
 
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -137,7 +170,7 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		self.app.get("task_important/1", follow_redirects=True)
-		result = self.app.get("/dashboard_important", follow_redirects=True)
+		result = self.app.get("/filter_important", follow_redirects=True)
 
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -150,7 +183,7 @@ class List_Test(unittest.TestCase):
 		self.reg_log()
 	
 		#Act
-		result = self.app.get("/dashboard_completed", follow_redirects=True)
+		result = self.app.get("/filter_completed", follow_redirects=True)
 
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -164,7 +197,7 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		self.app.get("task_completed/1", follow_redirects=True)
-		result = self.app.get("/dashboard_completed", follow_redirects=True)
+		result = self.app.get("/filter_completed", follow_redirects=True)
 		
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -176,7 +209,7 @@ class List_Test(unittest.TestCase):
 		self.reg_log()
 	
 		#Act
-		result = self.app.get("/dashboard_current", follow_redirects=True)
+		result = self.app.get("/filter_current", follow_redirects=True)
 
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -190,7 +223,7 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		self.app.get("task_completed/1", follow_redirects=True)
-		result = self.app.get("/dashboard_current", follow_redirects=True)
+		result = self.app.get("/filter_current", follow_redirects=True)
 		
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -202,7 +235,7 @@ class List_Test(unittest.TestCase):
 		self.reg_log()
 	
 		#Act
-		result = self.app.get("/dashboard_deleted", follow_redirects=True)
+		result = self.app.get("/filter_deleted", follow_redirects=True)
 
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)
@@ -216,7 +249,7 @@ class List_Test(unittest.TestCase):
 	
 		#Act
 		self.app.get("task_delete/1", follow_redirects=True)
-		result = self.app.get("/dashboard_deleted", follow_redirects=True)
+		result = self.app.get("/filter_deleted", follow_redirects=True)
 		
 		#Assert
 		self.assertTrue(b'Getting Started' in result.data)

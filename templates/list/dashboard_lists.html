@@ -39,7 +39,7 @@
 
 	
 	<span id="current-title-span-{{list.id}}" class="current-title-span">
-		<a href="{{ url_for('choose_current_list', new_list_id=list.id) }}">{{ list.title }}</a>
+		<a href="{{ url_for('choose_current_list', new_list_id=list.id) }}">{{ list.title }} ({{list.all_count}})</a>
 	</span>
 		
 	<a href="#" onclick="toggleEditForm( {{list.id}} )"><span class="material-icons" id="list-edit-icon-{{list.id}}">edit</span></a>
