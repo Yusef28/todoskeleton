@@ -53,7 +53,7 @@ def filter_current():
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
 	current_tasks = Task.query.filter_by(parent_list=current_list.id, state="current")
-	current_tasks = sorted(list(current_tasks), key=lambda x:(-x.important, x.id))
+	current_tasks = sorted(list(current_tasks), key=lambda x:(-x.important, x.sort_value))
 	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="current")
 	
 	
@@ -83,7 +83,7 @@ def filter_deleted():
 	if not current_list:
 		return render_template('list/dashboard.html', lists=lists, current_list = current_list)
 	current_tasks = Task.query.filter_by(
-	parent_list=current_list.id, ).filter(or_(Task.state=="current-deleted", Task.state=="completed-deleted"))
+	parent_list=current_list.id, ).filter(or_(Task.state=="current-deleted", Task.state=="deleted"))
 	#http://www.leeladharan.com/sqlalchemy-query-with-or-and-like-common-filters
 	
 	return render_template('list/dashboard.html', lists = lists, tasks = current_tasks, current_list = current_list, filter="Deleted")
@@ -110,8 +110,31 @@ def dashboard():
 	
 	if not current_list:
 		return render_template('list/dashboard_lists.html', lists=lists)
-		
-	tasks = Task.query.filter_by(parent_list=current_list.id).filter(or_(Task.state=="current", Task.state=="completed"))
-	tasks = sorted(list(tasks), key=lambda x:(-x.important, x.id))
-	return render_template('list/dashboard.html', lists = lists, tasks = tasks, current_list = current_list, filter="All")
+	
+	current, completed, deleted = [], [], []
+	tasks = Task.query.filter_by(parent_list=current_list.id)
+	tasks = sorted(list(tasks), key=lambda x:(
+	-x.important,
+	x.state=="deleted",
+	x.state=="current",
+	x.state=="completed",
+	x.id))
+	
+	#for task in tasks:
+	#	if task.state == "current":
+	#		current.append(task)
+	#	elif task.state == "completed":
+	#		completed.append(task)
+	#	else:
+	#		deleted.append(task)
+			
+
+	return render_template('list/dashboard.html', 
+	lists = lists, 
+	tasks = tasks, 
+	deleted=deleted, 
+	completed=completed, 
+	current=current, 
+	current_list=current_list, 
+	filter="All")
 	

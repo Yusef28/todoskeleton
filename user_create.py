@@ -29,7 +29,7 @@ def user_create(name, email, password):
 	db.session.commit()
 
 	#Init Getting Started List
-	getting_started_list = List(title="Getting Started", current = True, parent_user=user.id, all_count=6)
+	getting_started_list = List(title="Getting Started", current = True, parent_user=user.id, all_count=6, current_count=6)
 	db.session.add(getting_started_list)
 	db.session.commit()
 	
@@ -48,7 +48,7 @@ def user_create(name, email, password):
 	db.session.commit()
 	
 	#Init Books to read List
-	good_books_list = List(title="Good Books", current = False, parent_user=user.id, all_count=5)
+	good_books_list = List(title="Good Books", current = False, parent_user=user.id, all_count=5, current_count=5)
 	db.session.add(good_books_list)
 	db.session.commit()
 	

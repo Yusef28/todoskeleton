@@ -76,6 +76,7 @@
 				z.style.display = "inline"
 			}
 		}
+		
     </script>
 	
 	
@@ -94,19 +95,45 @@
 	</div>
 
 	<br>
+	
 	{% for task in tasks %}
     <li class="list-group-item">
 	<div class="left-side">
 	
 	<div class="task-left">
 	<a href="{{ url_for('task_completed', id=task.id) }}">
-	<span class="material-icons">{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}</span>
+	<span class="material-icons">
+	{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}
+	</span>
 	</a>
 	</div>
 	
 	<div class="task-middle">
-	<p class="task-title">{{ task.title }}</p>
-	<p><span class="task-created">Created on: {{task.time_created}}</span></p>
+	
+	<form class="task-title-form" id="task-title-form-{{task.id}}" 
+	action="{{ url_for('task_update', id=task.id) }}" 
+	method="POST">
+	
+		<input name="task_title_change_input" 
+		id="task-title-change-input-{{task.id}}" 
+		type="text" 
+		class="task-title-change-input" 
+		value="{{ task.title }}" 
+		size="5", 
+		required>
+		
+	</form>
+	
+	
+	<p class="task-title" 
+	id="task-title-span-{{task.id}}">
+	{% if filter == "current" %} {{ task.sort_value}}.{% endif %}{{ task.title }}
+	</p>
+	
+	<p>
+	<span class="task-created">Created on: {{task.time_created}}</span>
+	</p>
+	
 	</div>
 	
 	<div class="task-right">
@@ -122,11 +149,28 @@
 		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
 		<span class="material-icons"> restore_from_trash</span>
 		</a>
+		
 		{% endif %}
 		
 		<a href="{{ url_for('task_delete', id=task.id) }}"> 
-		<span class="material-icons"> delete</span>
+		<span class="material-icons" id="task-delete-a-{{task.id}}"> delete</span>
 		</a>
+		
+		<a href="#" onclick="toggleEditTaskForm( {{task.id}} )"><span class="material-icons" id="task-edit-icon-{{task.id}}">edit</span></a>
+	
+	
+		{% if filter == "current" %}
+		
+		<a href="{{ url_for('task_sort_up', id=task.id) }}"> 
+		<span class="material-icons"> arrow_upward</span>
+		</a>
+		
+		<a href="{{ url_for('task_sort_down', id=task.id) }}"> 
+		<span class="material-icons"> arrow_downward</span>
+		</a>
+		
+		{% endif %}
+		
 	</div>
 	</li>
 	{% endfor %}
@@ -137,8 +181,33 @@
 	<h2> No List Selected </h2>
 	
 	{% endif %}
+	
+	
 
 </ul>
-	
+	<script>
+        function toggleEditTaskForm(id){
+		var v = document.getElementById("task-edit-icon-"+id)
+		var w = document.getElementById("task-delete-a-"+id)
+		var x = document.getElementById("task-title-span-"+id)
+		var y = document.getElementById("task-title-form-"+id)
+		var z = document.getElementById("task-title-change-input-"+id)
+		
+			if (x.style.display === "none"){
+				v.innerHTML = "edit"
+				x.style.display = "inline"
+				w.style.display = "inline"
+				y.style.display = "none"
+				z.style.display = "none"
+			}
+			else{
+				v.innerHTML = "cancel"
+				w.style.display = "none"
+				x.style.display = "none"
+				y.style.display = "inline"
+				z.style.display = "inline"
+			}
+		}
+    </script>
 </div>
 {% endblock %}

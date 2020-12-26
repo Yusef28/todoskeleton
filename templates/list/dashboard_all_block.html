@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block all_content %}
+	<hr>
+	<br>
+	<h3>Current Tasks ({{current|length}})</h3>
+	<hr>
+
+	{% for task in current %}
+    <li class="list-group-item">
+	<div class="left-side">
+	
+	<div class="task-left">
+	<a href="{{ url_for('task_completed', id=task.id) }}">
+	<span class="material-icons">{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}</span>
+	</a>
+	</div>
+	
+	<div class="task-middle">
+	<p class="task-title">{{ task.title }}</p>
+	<p><span class="task-created">Created on: {{task.time_created}}</span></p>
+	</div>
+	
+	<div class="task-right">
+	
+		{% if task.state == "current" or task.state == "completed" %}
+		
+		<a href="{{ url_for('task_important', id=task.id) }}"> 
+		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
+		</a>
+		
+		{% else %}
+		
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
+		<span class="material-icons"> restore_from_trash</span>
+		</a>
+		{% endif %}
+		
+		<a href="{{ url_for('task_delete', id=task.id) }}"> 
+		<span class="material-icons"> delete</span>
+		</a>
+	</div>
+	</li>
+	{% endfor %}
+<hr>
+	<br>
+	<h3>Current Tasks ({{completed|length}})</h3>
+	<hr>
+
+	{% for task in completed %}
+    <li class="list-group-item">
+	<div class="left-side">
+	
+	<div class="task-left">
+	<a href="{{ url_for('task_completed', id=task.id) }}">
+	<span class="material-icons">{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}</span>
+	</a>
+	</div>
+	
+	<div class="task-middle">
+	<p class="task-title">{{ task.title }}</p>
+	<p><span class="task-created">Created on: {{task.time_created}}</span></p>
+	</div>
+	
+	<div class="task-right">
+	
+		{% if task.state == "current" or task.state == "completed" %}
+		
+		<a href="{{ url_for('task_important', id=task.id) }}"> 
+		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
+		</a>
+		
+		{% else %}
+		
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
+		<span class="material-icons"> restore_from_trash</span>
+		</a>
+		{% endif %}
+		
+		<a href="{{ url_for('task_delete', id=task.id) }}"> 
+		<span class="material-icons"> delete</span>
+		</a>
+	</div>
+	</li>
+	{% endfor %}
+<hr>
+	<br>
+	<h3>Current Tasks ({{deleted|length}})</h3>
+	<hr>
+
+	{% for task in deleted %}
+    <li class="list-group-item">
+	<div class="left-side">
+	
+	<div class="task-left">
+	<a href="{{ url_for('task_completed', id=task.id) }}">
+	<span class="material-icons">{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}</span>
+	</a>
+	</div>
+	
+	<div class="task-middle">
+	<p class="task-title">{{ task.title }}</p>
+	<p><span class="task-created">Created on: {{task.time_created}}</span></p>
+	</div>
+	
+	<div class="task-right">
+	
+		{% if task.state == "current" or task.state == "completed" %}
+		
+		<a href="{{ url_for('task_important', id=task.id) }}"> 
+		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
+		</a>
+		
+		{% else %}
+		
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
+		<span class="material-icons"> restore_from_trash</span>
+		</a>
+		{% endif %}
+		
+		<a href="{{ url_for('task_delete', id=task.id) }}"> 
+		<span class="material-icons"> delete</span>
+		</a>
+	</div>
+	</li>
+	{% endfor %}
+
+{% endblock %}

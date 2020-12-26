@@ -101,10 +101,23 @@
 </nav>
 
 
-{% block content %}
+	{% block content %}
 		
-{% endblock %}
+	{% endblock %}
 
+	{% if filter and filter == "All" %}
+	
+		{% block all_content %}
+		
+		{% endblock %}
+		
+	{% elif filter %}
+	
+		{% block filtered_content %}
+		
+		{% endblock %}
+		
+	{% endif %}
 
 
 </body>

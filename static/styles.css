@@ -21,7 +21,27 @@ h2{
 	text-align:center;
 }
 
+
+
+
 .list-title-static{
+
+}
+
+.task-title-form, .task-title-span{
+	display:none;
+	
+	
+}
+
+.task-title-change-input{
+	width:400px;
+	height:30px;
+	font-size:20px;
+	border:none;
+	color:black;
+	border-bottom:2px solid #bbbbbb;
+	background-color:#eeeeee;
 
 }
 
