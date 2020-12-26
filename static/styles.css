@@ -183,8 +183,10 @@ h2{
 .task-right{
 	margin:0px;
 	margin-left:auto;
-	width:60px;
+	width:170px;
 	white-space:nowrap;
+	display:flex;
+	justify-content:flex-end;
 }
 
 h2.list-title{
