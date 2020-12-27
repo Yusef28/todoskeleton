@@ -127,11 +127,13 @@
 	
 	<p class="task-title" 
 	id="task-title-span-{{task.id}}">
-	{% if filter == "current" %} {{ task.sort_value}}.{% endif %}{{ task.title }}
+	{% if filter == "current" %} {{task.sort_value}}. {% endif %}{{ task.title }}
 	</p>
 	
 	<p>
 	<span class="task-created">Created on: {{task.time_created}}</span>
+	<!-- <input type="time" value="00:00" class="time"></input> bis <input type="time" value="00:00" class="time"></input> -->
+	
 	</p>
 	
 	</div>

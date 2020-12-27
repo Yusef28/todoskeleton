@@ -1,10 +1,11 @@
-go to databases
-start a console in your database
-mysql> SHOW tables
 go to new directory
 git init .
 git remote add origin https://git...
 
+
+go to databases
+start a console in your database
+mysql> SHOW tables
 
 will show all tables
 
@@ -27,6 +28,21 @@ db.create_all()
 
 the db has the uri of the pythonanywhere database so you just need to be
 in the location of the flasKa_app.py to run this second console.
+
+Then go to web:
+Change the source code directory to the new one.
+go to the wsgi file and it should be:
+
+import sys
+
+# add your project directory to the sys.path
+project_home = '/home/dumi/skeleton-26-12-2020' <--path to directory with flask_app
+if project_home not in sys.path:
+    sys.path = [project_home] + sys.path
+
+# import flask app but need to call it "application" for WSGI to work
+from flask_app import app as application  # noqa
+
 
 
 

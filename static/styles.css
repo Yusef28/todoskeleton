@@ -21,6 +21,10 @@ h2{
 	text-align:center;
 }
 
+h3{
+	font-size:30px;
+	text-align:center;
+}
 
 
 
@@ -30,8 +34,6 @@ h2{
 
 .task-title-form, .task-title-span{
 	display:none;
-	
-	
 }
 
 .task-title-change-input{
@@ -42,7 +44,6 @@ h2{
 	color:black;
 	border-bottom:2px solid #bbbbbb;
 	background-color:#eeeeee;
-
 }
 
 .list-title-form, .list-title-change-input{
@@ -52,7 +53,6 @@ h2{
 .is-danger{
 	color:red;
 	font-size:20px;
-	
 }
 
 .form{
@@ -78,7 +78,6 @@ h2{
 }
 .new-list-form-input:focus{
 	outline:none;
-	
 }
 
 
@@ -111,8 +110,6 @@ h2{
 	outline:none;
 	background-color:#fff;
 	border-radius:5px;
-	
-	
 }
 
 .input-group{
@@ -180,6 +177,9 @@ h2{
 	text-overflow:ellipsis;
 }
 
+.time{
+}
+
 .task-right{
 	margin:0px;
 	margin-left:auto;
@@ -189,6 +189,14 @@ h2{
 	justify-content:flex-end;
 }
 
+.admin-update-list-item{
+	padding:20px;
+}
+.admin-update-item-p{
+	font-size:20px;
+}
+
+
 h2.list-title{
 	text-align:center;
 }
@@ -197,7 +205,6 @@ h2.list-title{
 	.container{
 		width:760px;
 	}
-
 }
 
 @media only screen and (max-width:450px){
