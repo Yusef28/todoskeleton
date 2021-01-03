@@ -20,13 +20,19 @@ from sqlalchemy import or_
 #Modules
 from flask_app import db, app
 from models import User, List, Task
-import task_routes, list_routes, user_routes
+import task_routes, \
+	list_routes, \
+	user_routes, \
+	task_time_routes, \
+	task_advanced_form
+	
 #for some reason I need to also import all from each of these. 
 #especially list_routes for find all from list
 from list_routes import *
 from task_routes import *
 from user_routes import *
-
+from task_time_routes import *
+from task_advanced_form import *
 
 
 @app.route("/get_lists_and_current_list")
@@ -39,12 +45,16 @@ def get_lists_and_current_list():
 	
 @app.route("/")
 def index():
+	num_users = db.session.query(User).count()
+	num_lists = db.session.query(List).count()
+	num_tasks = db.session.query(Task).count()
 	if 'user_id' not in session or not user_read(session['user_id']):
 	#on start and after clear
-		return render_template('auth/index.html')
+		return render_template('auth/index.html', num_users=num_users, num_lists=num_lists, num_tasks=num_tasks)
 	else:
 		lists, current_list = get_lists_and_current_list()
-		return render_template('auth/index.html', lists=lists, current_list=current_list)
+		return render_template('auth/index.html', lists=lists, current_list=current_list, 
+		num_users=num_users, num_lists=num_lists, num_tasks=num_tasks)
 		
 		
 @app.route("/filter_current")
@@ -120,16 +130,17 @@ def dashboard():
 	x.state=="completed",
 	x.id))
 	
-	#for task in tasks:
-	#	if task.state == "current":
-	#		current.append(task)
-	#	elif task.state == "completed":
-	#		completed.append(task)
-	#	else:
-	#		deleted.append(task)
+	for task in tasks:
+		if task.state == "current":
+			current.append(task)
+		elif task.state == "completed":
+			completed.append(task)
+		else:
+			deleted.append(task)
 			
-
-	return render_template('list/dashboard.html', 
+	current = sorted(current, key=lambda x:(-x.important, x.sort_value))
+	
+	return render_template('list/dashboard_filter_all.html', 
 	lists = lists, 
 	tasks = tasks, 
 	deleted=deleted, 

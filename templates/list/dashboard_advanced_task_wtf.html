@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<br>
+<br>
+
+<div class="form">
+  <form method="post" class="form">
+
+    <h1>New Task</h1>
+	
+	{{ form.csrf_token }}
+	
+	<br>
+	
+	{% for field in form %}
+	
+    <div class="form-group">
+		 <tr>
+			<td>{{ field.label }}
+			<br>
+			{{ field }}</td>
+		</tr>
+	</div>
+	
+	{% endfor %}
+	
+  </form>
+  
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+			<div class="notification is-danger">
+				{{ message }}
+			</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+	
+</div>
+	
+{% endblock %}

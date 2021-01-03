@@ -95,15 +95,15 @@
 	</div>
 
 	<br>
-	
-	{% for task in tasks %}
+	<h4 class="dashboard_filter_all_heading">Current</h4>
+	{% for task in current %}
     <li class="list-group-item">
 	<div class="left-side">
 	
 	<div class="task-left">
 	<a href="{{ url_for('task_completed', id=task.id) }}">
 	<span class="material-icons">
-	{{ 'check' if task.state == "completed" or task.state == "completed-deleted" else 'radio_button_unchecked' }}
+	radio_button_unchecked
 	</span>
 	</a>
 	</div>
@@ -127,7 +127,7 @@
 	
 	<p class="task-title" 
 	id="task-title-span-{{task.id}}">
-	{% if filter == "current" %} {{task.sort_value}}. {% endif %}{{ task.title }}
+	{{task.sort_value}}. {{ task.title }}
 	</p>
 	
 	<p class="task-info-group">
@@ -150,11 +150,9 @@
 		<a href="{{ url_for('task_important', id=task.id) }}"> 
 		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
 		</a>
-		<a href="#" onclick="toggleEditTaskForm( {{task.id}} )"><span class="material-icons" id="task-edit-icon-{{task.id}}">edit</span></a>
-	
+		
 		{% else %}
-		<a href="#" onclick="toggleEditTaskForm( {{task.id}} )"><span class="material-icons" id="task-edit-icon-{{task.id}}">edit</span></a>
-	
+		
 		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
 		<span class="material-icons"> restore_from_trash</span>
 		</a>
@@ -162,12 +160,11 @@
 		{% endif %}
 		
 		<a href="{{ url_for('task_delete', id=task.id) }}"> 
-		<span class="material-icons" id="task-delete-a-{{task.id}}"> {{ 'delete' if task.state == "current" else 'delete_forever' }}</span>
+		<span class="material-icons" id="task-delete-a-{{task.id}}"> delete</span>
 		</a>
 		
-		
-	
-		{% if filter == "current" %}
+		<a href="#" onclick="toggleEditTaskForm( {{task.id}} )"><span class="material-icons" id="task-edit-icon-{{task.id}}">edit</span></a>
+
 		
 		<a href="{{ url_for('task_sort_up', id=task.id) }}"> 
 		<span class="material-icons"> arrow_upward</span>
@@ -176,8 +173,116 @@
 		<a href="{{ url_for('task_sort_down', id=task.id) }}"> 
 		<span class="material-icons"> arrow_downward</span>
 		</a>
+
+		
+	</div>
+	</li>
+	{% endfor %}
+
+	<br>
+	<h4 class="dashboard_filter_all_heading">Completed</h4>
+	
+	{% for task in completed %}
+    <li class="list-group-item">
+	<div class="left-side">
+	
+	<div class="task-left">
+	<a href="{{ url_for('task_completed', id=task.id) }}">
+	<span class="material-icons">check</span>
+	</a>
+	</div>
+	
+	<div class="task-middle">
+	
+		
+	<p class="task-title" 
+	id="task-title-span-{{task.id}}">
+	{{ task.title }}
+	</p>
+	
+	<p class="task-info-group">
+	<hr class="no-pad-break">
+	<!-- <input type="time" value="00:00" class="time"></input> bis <input type="time" value="00:00" class="time"></input> -->
+	<span class="task-info task-created_time">Created: {{task.time_created}} ~ </span>
+	<span class="task-info task-energy">Energy: {{task.energy_rating}} ~ </span>
+	<span class="task-info task-type">Type: {{task.type}} ~ </span>
+	<span class="task-info task-reoccurance">Every: {{task.reoccurance_days}} days</span>
+	
+	</p>
+	
+	</div>
+	
+	<div class="task-right">
+	
+		{% if task.state == "current" or task.state == "completed" %}
+		
+		<a href="{{ url_for('task_important', id=task.id) }}"> 
+		<span class="material-icons">{{ 'star' if task.important else 'star_border' }}</span>
+		</a>
+		
+		{% else %}
+		
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
+		<span class="material-icons"> restore_from_trash</span>
+		</a>
 		
 		{% endif %}
+		
+		<a href="{{ url_for('task_delete', id=task.id) }}"> 
+		<span class="material-icons" id="task-delete-a-{{task.id}}"> delete_forever</span>
+		</a>
+		
+
+		
+	</div>
+	</li>
+	{% endfor %}
+	
+	<br>
+	<h4 class="dashboard_filter_all_heading">Deleted</h4>
+	{% for task in deleted %}
+    <li class="list-group-item">
+	<div class="left-side">
+	
+	<div class="task-left">
+	<a href="{{ url_for('task_completed', id=task.id) }}">
+	<span class="material-icons">radio_button_unchecked</span>
+	</a>
+	</div>
+	
+	<div class="task-middle">
+	
+		
+	<p class="task-title" 
+	id="task-title-span-{{task.id}}">
+	{{ task.title }}
+	</p>
+	
+	<p class="task-info-group">
+	<hr class="no-pad-break">
+	<!-- <input type="time" value="00:00" class="time"></input> bis <input type="time" value="00:00" class="time"></input> -->
+	<span class="task-info task-created_time">Created: {{task.time_created}} ~ </span>
+	<span class="task-info task-energy">Energy: {{task.energy_rating}} ~ </span>
+	<span class="task-info task-type">Type: {{task.type}} ~ </span>
+	<span class="task-info task-reoccurance">Every: {{task.reoccurance_days}} days</span>
+	
+	</p>
+	
+	</div>
+	
+	<div class="task-right">
+		
+		<a href="{{ url_for('task_delete_undo', id=task.id) }}"> 
+		<span class="material-icons"> restore_from_trash</span>
+		</a>
+		
+	
+		
+		<a href="{{ url_for('task_delete', id=task.id) }}"> 
+		<span class="material-icons" id="task-delete-a-{{task.id}}"> delete_forever</span>
+		</a>
+		
+
 		
 	</div>
 	</li>

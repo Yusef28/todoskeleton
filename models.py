@@ -136,7 +136,8 @@ class Task(db.Model):
 	bg_color = db.Column(db.String(200), unique=False, nullable=True, default=None)#must check if none
 	
 	#rating/type columns
-	type = db.Column(db.String(200), unique=False, nullable=True, default="basic")#Rainy, Frog, Hero, #basic
+	#Rainy, Frog, Hero, basic, social, a change, a transition
+	type = db.Column(db.String(200), unique=False, nullable=True, default="basic")
 	importance_rating = db.Column(db.Integer, nullable=False, default=0)
 	energy_rating = db.Column(db.Integer, nullable=False, default=1)
 	
